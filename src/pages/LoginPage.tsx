@@ -2,6 +2,11 @@ import { useState, type SubmitEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { ApiError } from '../api/client.ts'
 import { useAuth } from '../auth/useAuth.ts'
+import { Layout } from '../components/layout/Layout.tsx'
+import { Button } from '../components/ui/Button.tsx'
+import { FormError } from '../components/ui/FormError.tsx'
+import { Input } from '../components/ui/Input.tsx'
+import { PasswordInput } from '../components/ui/PasswordInput.tsx'
 
 export function LoginPage() {
   const { login, token, isLoading } = useAuth()
@@ -35,39 +40,43 @@ export function LoginPage() {
   }
 
   return (
-    <main>
-      <h1>Log in</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
+    <Layout>
+      <div className="auth-card">
+        <h1>Log in</h1>
+        {error && <FormError message={error} />}
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <Input
             id="email"
+            label="Email"
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
             autoComplete="email"
+            autoFocus
+            disabled={isSubmitting}
           />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
+            label="Password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
             autoComplete="current-password"
+            disabled={isSubmitting}
           />
-        </div>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Logging in...' : 'Log in'}
-        </button>
-      </form>
-      <p>
-        Don&apos;t have an account? <Link to="/register">Register</Link>
-      </p>
-    </main>
+          <Button
+            type="submit"
+            className="auth-form__submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Signing in...' : 'Log in'}
+          </Button>
+        </form>
+        <p className="auth-link">
+          Don&apos;t have an account? <Link to="/register">Register</Link>
+        </p>
+      </div>
+    </Layout>
   )
 }

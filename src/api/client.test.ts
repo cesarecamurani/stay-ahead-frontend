@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, request } from './client.ts'
+import { ApiError, parseErrorMessages, request } from './client.ts'
 
 function mockFetch(response: Partial<Response> & { json?: () => Promise<unknown> }) {
   vi.stubGlobal(
@@ -81,8 +81,44 @@ describe('request', () => {
     })
 
     await expect(request('/api/v1/users')).rejects.toEqual(
-      new ApiError('Email is invalid, Password is too short', 422),
+      new ApiError('Email is invalid\nPassword is too short', 422),
     )
+  })
+
+  it('throws ApiError with Rails field validation errors', async () => {
+    mockFetch({
+      ok: false,
+      status: 422,
+      json: async () => ({
+        errors: {
+          email: ['has already been taken'],
+          password: ['is too short'],
+        },
+      }),
+    })
+
+    await expect(request('/api/v1/users')).rejects.toEqual(
+      new ApiError('email has already been taken\npassword is too short', 422),
+    )
+  })
+
+  it('parses Rails field validation errors into messages', () => {
+    expect(
+      parseErrorMessages({
+        errors: {
+          email: ['has already been taken'],
+          password: ['is too short'],
+        },
+      }),
+    ).toEqual(['email has already been taken', 'password is too short'])
+  })
+
+  it('falls back when errors payload is empty or unparseable', () => {
+    expect(parseErrorMessages({ errors: {} })).toEqual(['Request failed'])
+    expect(parseErrorMessages({ errors: [] })).toEqual(['Request failed'])
+    expect(parseErrorMessages({ errors: { email: 123 } })).toEqual([
+      'Request failed',
+    ])
   })
 
   it('throws ApiError with a single error field', async () => {
