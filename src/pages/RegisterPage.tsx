@@ -2,6 +2,19 @@ import { useState, type SubmitEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { ApiError } from '../api/client.ts'
 import { useAuth } from '../auth/useAuth.ts'
+import { Layout } from '../components/layout/Layout.tsx'
+import { Button } from '../components/ui/Button.tsx'
+import { FormError } from '../components/ui/FormError.tsx'
+import { Input } from '../components/ui/Input.tsx'
+import { NumberInput } from '../components/ui/NumberInput.tsx'
+import { PasswordInput } from '../components/ui/PasswordInput.tsx'
+import { Select } from '../components/ui/Select.tsx'
+import {
+  CURRENCIES,
+  DEFAULT_CURRENCY,
+  formatCurrencyOption,
+} from '../data/currencies.ts'
+import { parseFormattedNumber } from '../utils/formatNumber.ts'
 
 export function RegisterPage() {
   const { register, token, isLoading } = useAuth()
@@ -11,8 +24,11 @@ export function RegisterPage() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [monthlyIncome, setMonthlyIncome] = useState('')
   const [savings, setSavings] = useState('')
-  const [currency, setCurrency] = useState('EUR')
+  const [currency, setCurrency] = useState(DEFAULT_CURRENCY)
   const [error, setError] = useState<string | null>(null)
+  const [passwordConfirmationError, setPasswordConfirmationError] = useState<
+    string | null
+  >(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   if (!isLoading && token) {
@@ -22,9 +38,12 @@ export function RegisterPage() {
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
+    setPasswordConfirmationError(null)
 
     if (password !== passwordConfirmation) {
-      setError('Passwords do not match.')
+      const mismatchMessage = 'Passwords do not match.'
+      setError(mismatchMessage)
+      setPasswordConfirmationError(mismatchMessage)
       return
     }
 
@@ -35,8 +54,8 @@ export function RegisterPage() {
         email,
         password,
         password_confirmation: passwordConfirmation,
-        monthly_income: Number(monthlyIncome),
-        savings: Number(savings),
+        monthly_income: parseFormattedNumber(monthlyIncome),
+        savings: parseFormattedNumber(savings),
         currency,
       })
       navigate('/')
@@ -52,87 +71,85 @@ export function RegisterPage() {
   }
 
   return (
-    <main>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input
+    <Layout>
+      <div className="auth-card">
+        <h1>Register</h1>
+        {error && <FormError message={error} />}
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <Input
             id="email"
+            label="Email"
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
             autoComplete="email"
+            autoFocus
+            disabled={isSubmitting}
           />
-        </div>
-        <div>
-          <label htmlFor="password">Password</label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
+            label="Password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
             autoComplete="new-password"
+            disabled={isSubmitting}
           />
-        </div>
-        <div>
-          <label htmlFor="password_confirmation">Confirm password</label>
-          <input
+          <PasswordInput
             id="password_confirmation"
-            type="password"
+            label="Confirm password"
             value={passwordConfirmation}
             onChange={(event) => setPasswordConfirmation(event.target.value)}
             required
             autoComplete="new-password"
+            error={passwordConfirmationError}
+            disabled={isSubmitting}
           />
-        </div>
-        <div>
-          <label htmlFor="monthly_income">Monthly income</label>
-          <input
+          <NumberInput
             id="monthly_income"
-            type="number"
+            label="Monthly income"
             min="0"
             step="0.01"
             value={monthlyIncome}
             onChange={(event) => setMonthlyIncome(event.target.value)}
             required
+            disabled={isSubmitting}
           />
-        </div>
-        <div>
-          <label htmlFor="savings">Savings</label>
-          <input
+          <NumberInput
             id="savings"
-            type="number"
+            label="Savings"
             min="0"
             step="0.01"
             value={savings}
             onChange={(event) => setSavings(event.target.value)}
             required
+            disabled={isSubmitting}
           />
-        </div>
-        <div>
-          <label htmlFor="currency">Currency</label>
-          <select
+          <Select
             id="currency"
+            label="Currency"
             value={currency}
             onChange={(event) => setCurrency(event.target.value)}
+            options={CURRENCIES.map((item) => ({
+              value: item.code,
+              label: formatCurrencyOption(item),
+            }))}
             required
+            disabled={isSubmitting}
+          />
+          <Button
+            type="submit"
+            className="auth-form__submit"
+            disabled={isSubmitting}
           >
-            <option value="EUR">EUR</option>
-            <option value="USD">USD</option>
-            <option value="GBP">GBP</option>
-          </select>
-        </div>
-        {error && <p role="alert">{error}</p>}
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Creating account...' : 'Register'}
-        </button>
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Log in</Link>
-      </p>
-    </main>
+            {isSubmitting ? 'Creating account...' : 'Register'}
+          </Button>
+        </form>
+        <p className="auth-link">
+          Already have an account? <Link to="/login">Log in</Link>
+        </p>
+      </div>
+    </Layout>
   )
 }
