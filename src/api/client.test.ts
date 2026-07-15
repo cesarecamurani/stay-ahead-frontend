@@ -113,6 +113,14 @@ describe('request', () => {
     ).toEqual(['email has already been taken', 'password is too short'])
   })
 
+  it('falls back when errors payload is empty or unparseable', () => {
+    expect(parseErrorMessages({ errors: {} })).toEqual(['Request failed'])
+    expect(parseErrorMessages({ errors: [] })).toEqual(['Request failed'])
+    expect(parseErrorMessages({ errors: { email: 123 } })).toEqual([
+      'Request failed',
+    ])
+  })
+
   it('throws ApiError with a single error field', async () => {
     mockFetch({
       ok: false,

@@ -33,11 +33,12 @@ export function parseErrorMessages(data: unknown): string[] {
 
   if (payload.errors !== undefined) {
     if (Array.isArray(payload.errors)) {
-      return payload.errors.map(String)
-    }
-
-    if (typeof payload.errors === 'object' && payload.errors !== null) {
-      return Object.entries(payload.errors as Record<string, unknown>).flatMap(
+      const messages = payload.errors.map(String).filter(Boolean)
+      if (messages.length > 0) {
+        return messages
+      }
+    } else if (typeof payload.errors === 'object' && payload.errors !== null) {
+      const messages = Object.entries(payload.errors as Record<string, unknown>).flatMap(
         ([field, value]) => {
           if (Array.isArray(value)) {
             return value.map((message) => formatFieldError(field, String(message)))
@@ -50,14 +51,18 @@ export function parseErrorMessages(data: unknown): string[] {
           return []
         },
       )
+
+      if (messages.length > 0) {
+        return messages
+      }
     }
   }
 
-  if (typeof payload.error === 'string') {
+  if (typeof payload.error === 'string' && payload.error) {
     return [payload.error]
   }
 
-  if (typeof payload.message === 'string') {
+  if (typeof payload.message === 'string' && payload.message) {
     return [payload.message]
   }
 

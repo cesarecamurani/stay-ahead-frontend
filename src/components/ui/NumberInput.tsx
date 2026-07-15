@@ -5,10 +5,14 @@ import {
   sanitizeNumericInput,
 } from '../../utils/formatNumber.ts'
 
-type NumberInputProps = Omit<ComponentProps<'input'>, 'type' | 'value'> & {
+type NumberInputProps = Omit<
+  ComponentProps<'input'>,
+  'type' | 'value' | 'onChange'
+> & {
   label: string
   id: string
   value: string
+  onValueChange: (value: string) => void
   error?: string | null
 }
 
@@ -67,7 +71,7 @@ export function NumberInput({
   id,
   error,
   value,
-  onChange,
+  onValueChange,
   disabled,
   step = 1,
   min = 0,
@@ -86,15 +90,8 @@ export function NumberInput({
     .filter(Boolean)
     .join(' ')
 
-  function emitValue(rawValue: string) {
-    onChange?.({
-      target: { value: rawValue },
-      currentTarget: { value: rawValue },
-    } as ChangeEvent<HTMLInputElement>)
-  }
-
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    emitValue(sanitizeNumericInput(event.target.value))
+    onValueChange(sanitizeNumericInput(event.target.value))
   }
 
   function handleStep(direction: 'up' | 'down') {
@@ -109,7 +106,7 @@ export function NumberInput({
         ? base + numericStep
         : Math.max(numericMin, base - numericStep)
 
-    emitValue(formatStepValue(next, numericStep))
+    onValueChange(formatStepValue(next, numericStep))
     inputRef.current?.focus()
   }
 

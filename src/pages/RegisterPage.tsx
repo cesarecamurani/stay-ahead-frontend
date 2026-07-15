@@ -47,6 +47,14 @@ export function RegisterPage() {
       return
     }
 
+    const monthlyIncomeValue = parseFormattedNumber(monthlyIncome)
+    const savingsValue = parseFormattedNumber(savings)
+
+    if (!Number.isFinite(monthlyIncomeValue) || !Number.isFinite(savingsValue)) {
+      setError('Please enter valid amounts for monthly income and savings.')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -54,8 +62,8 @@ export function RegisterPage() {
         email,
         password,
         password_confirmation: passwordConfirmation,
-        monthly_income: parseFormattedNumber(monthlyIncome),
-        savings: parseFormattedNumber(savings),
+        monthly_income: monthlyIncomeValue,
+        savings: savingsValue,
         currency,
       })
       navigate('/')
@@ -112,7 +120,7 @@ export function RegisterPage() {
             min="0"
             step="0.01"
             value={monthlyIncome}
-            onChange={(event) => setMonthlyIncome(event.target.value)}
+            onValueChange={setMonthlyIncome}
             required
             disabled={isSubmitting}
           />
@@ -122,7 +130,7 @@ export function RegisterPage() {
             min="0"
             step="0.01"
             value={savings}
-            onChange={(event) => setSavings(event.target.value)}
+            onValueChange={setSavings}
             required
             disabled={isSubmitting}
           />

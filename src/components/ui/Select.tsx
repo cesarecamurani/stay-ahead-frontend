@@ -37,13 +37,28 @@ export function Select({
   id,
   options,
   error,
+  className,
   ...props
 }: SelectProps) {
+  const selectClassName = [
+    'form-select',
+    'select-input__field',
+    error ? 'form-select--error' : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
     <div className="form-field">
       <label htmlFor={id}>{label}</label>
       <div className="select-input">
-        <select id={id} className="form-select select-input__field" {...props}>
+        <select
+          id={id}
+          className={selectClassName}
+          aria-invalid={error ? true : undefined}
+          {...props}
+        >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}

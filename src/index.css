@@ -284,6 +284,11 @@ a:hover {
   outline-offset: 1px;
 }
 
+.password-input__toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .number-input {
   position: relative;
   display: flex;

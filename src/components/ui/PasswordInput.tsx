@@ -54,6 +54,7 @@ export function PasswordInput({
   error,
   autoComplete,
   className,
+  disabled,
   ...props
 }: PasswordInputProps) {
   const [visible, setVisible] = useState(false)
@@ -76,6 +77,7 @@ export function PasswordInput({
           className={inputClassName}
           autoComplete={autoComplete}
           aria-invalid={error ? true : undefined}
+          disabled={disabled}
           {...props}
         />
         <button
@@ -83,6 +85,7 @@ export function PasswordInput({
           className="password-input__toggle"
           onClick={() => setVisible((current) => !current)}
           aria-label={visible ? 'Hide password' : 'Show password'}
+          disabled={disabled}
         >
           {visible ? <EyeOffIcon /> : <EyeIcon />}
         </button>
