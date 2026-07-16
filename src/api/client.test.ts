@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, parseErrorMessages, request } from './client.ts'
+import { ApiError, parseErrorMessages } from './errors.ts'
+import { request } from './client.ts'
 
 function mockFetch(response: Partial<Response> & { json?: () => Promise<unknown> }) {
   vi.stubGlobal(
@@ -57,20 +58,18 @@ describe('request', () => {
       token: 'jwt-token',
     })
 
-    expect(fetch).toHaveBeenCalledWith(
-      '/api/v1/login',
-      expect.objectContaining({
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer jwt-token',
-        },
-        body: JSON.stringify({
-          email: 'user@example.com',
-          password: 'secret',
-        }),
+    const [, options] = vi.mocked(fetch).mock.calls[0]
+    expect(options).toMatchObject({
+      method: 'POST',
+      body: JSON.stringify({
+        email: 'user@example.com',
+        password: 'secret',
       }),
-    )
+    })
+
+    const headers = options?.headers as Headers
+    expect(headers.get('Content-Type')).toBe('application/json')
+    expect(headers.get('Authorization')).toBe('Bearer jwt-token')
   })
 
   it('throws ApiError with joined Rails validation errors', async () => {

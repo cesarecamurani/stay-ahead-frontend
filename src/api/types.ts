@@ -17,3 +17,11 @@ export interface RegisterUserInput {
   savings: number
   currency: string
 }
+
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+
+export interface RequestOptions {
+  method?: HttpMethod
+  body?: Record<string, unknown>
+  token?: string | null
+}

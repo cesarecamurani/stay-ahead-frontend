@@ -1,7 +1,9 @@
+const CURRENT_YEAR = new Date().getFullYear()
+
 export function Footer() {
   return (
     <footer className="footer">
-      &copy; {new Date().getFullYear()} Stay Ahead
+      &copy; {CURRENT_YEAR} Stay Ahead
     </footer>
   )
 }

@@ -1,6 +1,6 @@
 import { useState, type SubmitEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { ApiError } from '../api/client.ts'
+import { ApiError } from '../api/errors.ts'
 import { useAuth } from '../auth/useAuth.ts'
 import { Layout } from '../components/layout/Layout.tsx'
 import { Button } from '../components/ui/Button.tsx'
@@ -9,49 +9,72 @@ import { Input } from '../components/ui/Input.tsx'
 import { NumberInput } from '../components/ui/NumberInput.tsx'
 import { PasswordInput } from '../components/ui/PasswordInput.tsx'
 import { Select } from '../components/ui/Select.tsx'
+import { PasswordRequirements } from '../components/ui/PasswordRequirements.tsx'
 import {
   CURRENCIES,
   DEFAULT_CURRENCY,
   formatCurrencyOption,
 } from '../data/currencies.ts'
 import { parseFormattedNumber } from '../utils/formatNumber.ts'
+import { validateEmail, validatePassword } from '../utils/validation.ts'
 
 export function RegisterPage() {
-  const { register, token, isLoading } = useAuth()
+  const { register, token } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState<string | null>(null)
   const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState<string | null>(null)
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [passwordConfirmationError, setPasswordConfirmationError] = useState<string | null>(null)
   const [monthlyIncome, setMonthlyIncome] = useState('')
   const [savings, setSavings] = useState('')
+  const [monthlyIncomeError, setMonthlyIncomeError] = useState<string | null>(null)
+  const [savingsError, setSavingsError] = useState<string | null>(null)
   const [currency, setCurrency] = useState(DEFAULT_CURRENCY)
-  const [error, setError] = useState<string | null>(null)
-  const [passwordConfirmationError, setPasswordConfirmationError] = useState<
-    string | null
-  >(null)
+  const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  if (!isLoading && token) {
+  if (token) {
     return <Navigate to="/" replace />
   }
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
-    setError(null)
+
+    setFormError(null)
+    setEmailError(null)
+    setPasswordError(null)
     setPasswordConfirmationError(null)
+    setMonthlyIncomeError(null)
+    setSavingsError(null)
+
+    const emailValidationError = validateEmail(email)
+    const passwordValidationError = validatePassword(password)
+
+    if (emailValidationError || passwordValidationError) {
+      setEmailError(emailValidationError)
+      setPasswordError(passwordValidationError)
+
+      return
+    }
 
     if (password !== passwordConfirmation) {
-      const mismatchMessage = 'Passwords do not match.'
-      setError(mismatchMessage)
-      setPasswordConfirmationError(mismatchMessage)
+      setPasswordConfirmationError('Passwords do not match.')
+
       return
     }
 
     const monthlyIncomeValue = parseFormattedNumber(monthlyIncome)
     const savingsValue = parseFormattedNumber(savings)
 
-    if (!Number.isFinite(monthlyIncomeValue) || !Number.isFinite(savingsValue)) {
-      setError('Please enter valid amounts for monthly income and savings.')
+    if (!Number.isFinite(monthlyIncomeValue)) {
+      setMonthlyIncomeError('Please enter a valid amount.')
+      return
+    }
+
+    if (!Number.isFinite(savingsValue)) {
+      setSavingsError('Please enter a valid amount.')
       return
     }
 
@@ -69,9 +92,9 @@ export function RegisterPage() {
       navigate('/')
     } catch (err) {
       if (err instanceof ApiError) {
-        setError(err.message)
+        setFormError(err.message)
       } else {
-        setError('Something went wrong. Please try again.')
+        setFormError('Something went wrong. Please try again.')
       }
     } finally {
       setIsSubmitting(false)
@@ -82,33 +105,51 @@ export function RegisterPage() {
     <Layout>
       <div className="auth-card">
         <h1>Register</h1>
-        {error && <FormError message={error} />}
-        <form className="auth-form" onSubmit={handleSubmit}>
+        {formError && <FormError message={formError} />}
+        <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <Input
             id="email"
             label="Email"
             type="email"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(event) => {
+              setEmail(event.target.value)
+
+              if (emailError) {
+                setEmailError(null)
+              }
+            }}
             required
             autoComplete="email"
             autoFocus
             disabled={isSubmitting}
+            error={emailError}
           />
           <PasswordInput
             id="password"
             label="Password"
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(event) => {
+              setPassword(event.target.value)
+
+              if (passwordError) {
+                setPasswordError(null)
+              }
+            }}
             required
             autoComplete="new-password"
             disabled={isSubmitting}
+            error={passwordError}
           />
+          <PasswordRequirements />
           <PasswordInput
             id="password_confirmation"
             label="Confirm password"
             value={passwordConfirmation}
-            onChange={(event) => setPasswordConfirmation(event.target.value)}
+            onChange={(event) => {
+              setPasswordConfirmation(event.target.value)
+              setPasswordConfirmationError(null)
+            }}
             required
             autoComplete="new-password"
             error={passwordConfirmationError}
@@ -120,7 +161,13 @@ export function RegisterPage() {
             min="0"
             step="0.01"
             value={monthlyIncome}
-            onValueChange={setMonthlyIncome}
+            onValueChange={(value) => {
+              setMonthlyIncome(value)
+
+              if (monthlyIncomeError) {
+                setMonthlyIncomeError(null)
+              }
+            }}
             required
             disabled={isSubmitting}
           />
@@ -130,7 +177,13 @@ export function RegisterPage() {
             min="0"
             step="0.01"
             value={savings}
-            onValueChange={setSavings}
+            onValueChange={(value) => {
+              setSavings(value)
+
+              if (savingsError) {
+                setSavingsError(null)
+              }
+            }}
             required
             disabled={isSubmitting}
           />

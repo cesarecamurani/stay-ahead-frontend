@@ -5,6 +5,7 @@ export interface Currency {
 
 export const CURRENCIES: Currency[] = [
   { code: 'EUR', name: 'Euro' },
+  { code: 'GBP', name: 'British Pound' },
   { code: 'USD', name: 'US Dollar' },
   { code: 'ALL', name: 'Albanian Lek' },
   { code: 'AMD', name: 'Armenian Dram' },
@@ -15,7 +16,6 @@ export const CURRENCIES: Currency[] = [
   { code: 'CHF', name: 'Swiss Franc' },
   { code: 'CZK', name: 'Czech Koruna' },
   { code: 'DKK', name: 'Danish Krone' },
-  { code: 'GBP', name: 'British Pound' },
   { code: 'GEL', name: 'Georgian Lari' },
   { code: 'GIP', name: 'Gibraltar Pound' },
   { code: 'HUF', name: 'Hungarian Forint' },

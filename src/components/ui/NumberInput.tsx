@@ -79,8 +79,8 @@ export function NumberInput({
   ...props
 }: NumberInputProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const numericStep = Number(step) || 1
-  const numericMin = Number(min) || 0
+  const numericStep = Number(step ?? 1)
+  const numericMin = Number(min ?? 0)
   const inputClassName = [
     'form-input',
     'number-input__field',
