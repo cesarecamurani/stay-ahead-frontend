@@ -9,7 +9,6 @@ function renderProtectedRoute(auth: Partial<AuthContextValue> = {}) {
   const value: AuthContextValue = {
     user: null,
     token: null,
-    isLoading: false,
     login: async () => {},
     register: async () => {},
     logout: () => {},
@@ -38,13 +37,6 @@ function renderProtectedRoute(auth: Partial<AuthContextValue> = {}) {
 describe('ProtectedRoute', () => {
   afterEach(() => {
     cleanup()
-  })
-
-  it('shows a loading state while auth is hydrating', () => {
-    renderProtectedRoute({ isLoading: true })
-
-    expect(screen.getByText('Loading...')).toBeInTheDocument()
-    expect(screen.queryByText('Protected content')).not.toBeInTheDocument()
   })
 
   it('redirects unauthenticated users to login', () => {

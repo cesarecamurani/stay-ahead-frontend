@@ -18,19 +18,21 @@ export function getStoredAuth(): StoredAuth | null {
 
   try {
     const user = JSON.parse(userJson) as User
+
     return { token, user }
   } catch {
     clearStoredAuth()
+
     return null
   }
 }
 
-export function setStoredAuth(token: string, user: User) {
-  localStorage.setItem(TOKEN_KEY, token)
+export function setStoredAuth(token: string, user: User): void {
   localStorage.setItem(USER_KEY, JSON.stringify(user))
+  localStorage.setItem(TOKEN_KEY, token)
 }
 
-export function clearStoredAuth() {
-  localStorage.removeItem(TOKEN_KEY)
+export function clearStoredAuth(): void {
   localStorage.removeItem(USER_KEY)
+  localStorage.removeItem(TOKEN_KEY)
 }

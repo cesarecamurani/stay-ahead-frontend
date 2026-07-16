@@ -4,6 +4,7 @@ type PasswordInputProps = Omit<ComponentProps<'input'>, 'type'> & {
   label: string
   id: string
   error?: string | null
+  hint?: string
 }
 
 function EyeIcon() {
@@ -52,6 +53,7 @@ export function PasswordInput({
   label,
   id,
   error,
+  hint,
   autoComplete,
   className,
   disabled,
@@ -85,11 +87,17 @@ export function PasswordInput({
           className="password-input__toggle"
           onClick={() => setVisible((current) => !current)}
           aria-label={visible ? 'Hide password' : 'Show password'}
+          aria-pressed={visible}
           disabled={disabled}
         >
           {visible ? <EyeOffIcon /> : <EyeIcon />}
         </button>
       </div>
+      {hint && (
+        <p className="field-hint" role="note">
+          {hint}
+        </p>
+      )}
       {error && (
         <p className="field-error" role="alert">
           {error}

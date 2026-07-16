@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import * as authApi from '../api/auth.ts'
-import type { RegisterUserInput } from '../api/types.ts'
+import type { RegisterUserInput, User } from '../api/types.ts'
 import { AuthContext } from './AuthContext.tsx'
 import {
   clearStoredAuth,
@@ -24,16 +24,21 @@ function getInitialAuth() {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [{ user, token }, setAuth] = useState(getInitialAuth)
 
+  function updateAuth(token: string, user: User) {
+    setStoredAuth(token, user)
+    setAuth({ user, token })
+  }
+
   async function login(email: string, password: string) {
     const response = await authApi.login(email, password)
-    setStoredAuth(response.token, response.user)
-    setAuth({ user: response.user, token: response.token })
+
+    updateAuth(response.token, response.user)
   }
 
   async function register(input: RegisterUserInput) {
     const response = await authApi.register(input)
-    setStoredAuth(response.token, response.user)
-    setAuth({ user: response.user, token: response.token })
+
+    updateAuth(response.token, response.user)
   }
 
   function logout() {
@@ -43,7 +48,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, isLoading: false, login, register, logout }}
+      value={{ user, token, login, register, logout }}
     >
       {children}
     </AuthContext.Provider>
