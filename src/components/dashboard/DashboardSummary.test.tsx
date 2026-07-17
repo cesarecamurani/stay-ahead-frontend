@@ -127,7 +127,7 @@ describe('DashboardSummary', () => {
     expect(mockGetSummary).toHaveBeenCalledWith('jwt-token')
   })
 
-  it('shows an em dash when summary metrics are null', async () => {
+  it('shows a dash when summary metrics are null', async () => {
     mockGetCurrentUser.mockResolvedValue(profile)
     mockGetSummary.mockResolvedValue({
       ...summary,
@@ -142,6 +142,6 @@ describe('DashboardSummary', () => {
       expect(screen.getByText('Monthly Commitments')).toBeInTheDocument()
     })
 
-    expect(screen.getAllByText('—')).toHaveLength(3)
+    expect(screen.getAllByText('-')).toHaveLength(3)
   })
 })

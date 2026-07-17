@@ -1,10 +1,10 @@
 export function formatSavingsRunway(months: number | null): string {
   if (months === null) {
-    return '—'
+    return '-'
   }
 
   if (!Number.isFinite(months)) {
-    return '—'
+    return '-'
   }
 
   if (months >= 12) {
