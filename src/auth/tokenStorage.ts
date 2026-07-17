@@ -3,6 +3,21 @@ import type { User } from '../api/types.ts'
 const TOKEN_KEY = 'stay_ahead_token'
 const USER_KEY = 'stay_ahead_user'
 
+function isStoredUser(value: unknown): value is User {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+
+  const user = value as Record<string, unknown>
+
+  return (
+    typeof user.id === 'number' &&
+    typeof user.email === 'string' &&
+    typeof user.username === 'string' &&
+    user.username.length > 0
+  )
+}
+
 export interface StoredAuth {
   token: string
   user: User
@@ -17,7 +32,13 @@ export function getStoredAuth(): StoredAuth | null {
   }
 
   try {
-    const user = JSON.parse(userJson) as User
+    const user = JSON.parse(userJson)
+
+    if (!isStoredUser(user)) {
+      clearStoredAuth()
+
+      return null
+    }
 
     return { token, user }
   } catch {

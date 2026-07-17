@@ -20,7 +20,7 @@ export function DashboardWelcome() {
   return (
     <section className="dashboard-welcome">
       <p className="dashboard-welcome__greeting">{getGreeting()}</p>
-      <h1 className="dashboard-welcome__name">{user?.username ?? user?.email}</h1>
+      <h1 className="dashboard-welcome__name">{user?.username}</h1>
       <p className="dashboard-welcome__subtitle">
         Here&apos;s your financial overview.
       </p>

@@ -90,6 +90,20 @@ describe('AuthProvider', () => {
     expect(screen.getByText('Token: stored-token')).toBeInTheDocument()
   })
 
+  it('starts unauthenticated when stored user is missing username', () => {
+    localStorage.setItem('stay_ahead_token', 'stored-token')
+    localStorage.setItem(
+      'stay_ahead_user',
+      JSON.stringify({ id: 1, email: 'stored@example.com' }),
+    )
+
+    renderAuthProvider()
+
+    expect(screen.getByText('Email: none')).toBeInTheDocument()
+    expect(screen.getByText('Token: none')).toBeInTheDocument()
+    expect(getStoredAuth()).toBeNull()
+  })
+
   it('persists auth state after login', async () => {
     const user = userEvent.setup()
     vi.mocked(authApi.login).mockResolvedValue(authResponse)

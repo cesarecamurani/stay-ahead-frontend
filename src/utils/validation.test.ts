@@ -19,5 +19,9 @@ describe('validateUsername', () => {
     expect(validateUsername('user@name')).not.toBeNull()
     expect(validateUsername('user name')).not.toBeNull()
   })
+
+  it('rejects uppercase letters', () => {
+    expect(validateUsername('JohnDoe')).not.toBeNull()
+  })
 })
 

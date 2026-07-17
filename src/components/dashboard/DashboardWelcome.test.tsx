@@ -23,19 +23,5 @@ describe('DashboardWelcome', () => {
 
     expect(screen.getByText('testuser')).toBeInTheDocument()
   })
-
-  it('falls back to email when username is missing', () => {
-    mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'user@example.com' },
-      token: 'jwt-token',
-      login: vi.fn(),
-      register: vi.fn(),
-      logout: vi.fn(),
-    } as any)
-
-    render(<DashboardWelcome />)
-
-    expect(screen.getByText('user@example.com')).toBeInTheDocument()
-  })
 })
 
