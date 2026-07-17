@@ -75,7 +75,7 @@ a:hover {
 
 .layout__main:has(.dashboard) {
   align-items: flex-start;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .header {
@@ -407,6 +407,16 @@ a:hover {
   cursor: not-allowed;
 }
 
+.btn--secondary {
+  color: var(--color-text-primary);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background-color: var(--color-border);
+}
+
 /* Dashboard */
 
 .dashboard {
@@ -449,7 +459,7 @@ a:hover {
 
 .summary-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
 }
 
@@ -474,9 +484,13 @@ a:hover {
   color: var(--color-accent);
 }
 
-.upcoming-commitments__empty {
+.dashboard-summary__message {
   margin: 0;
   color: var(--color-text-secondary);
+}
+
+.dashboard-summary__message--error {
+  color: var(--color-error);
 }
 
 .quick-actions {
@@ -526,6 +540,14 @@ a:hover {
   line-height: 1;
 }
 
+.commitments-page__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
 .commitments-page__title {
   margin: 0;
   font-size: 1.75rem;
@@ -533,8 +555,27 @@ a:hover {
 }
 
 .commitments-page__subtitle {
-  margin: 0;
+  margin: var(--space-xs) 0 0;
   color: var(--color-text-secondary);
+}
+
+.commitments-page__create {
+  width: auto;
+  min-width: 160px;
+}
+
+.commitment-form-card {
+  max-width: 480px;
+}
+
+.commitment-form__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.commitment-form__actions .auth-form__submit {
+  margin-top: 0;
 }
 
 .commitment-list {

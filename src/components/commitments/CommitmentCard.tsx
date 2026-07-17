@@ -1,9 +1,10 @@
 import type { Commitment } from '../../api/types.ts'
-import { DEFAULT_CURRENCY } from '../../data/currencies.ts'
+import { formatCurrency } from '../../utils/formatCurrency.ts'
 import { CommitmentStatusBadge } from './CommitmentStatusBadge.tsx'
 
 interface CommitmentCardProps {
   commitment: Commitment
+  currency: string
 }
 
 function formatLabel(value: string): string {
@@ -13,22 +14,13 @@ function formatLabel(value: string): string {
     .join(' ')
 }
 
-function formatAmount(amount: string, currency = DEFAULT_CURRENCY): string {
-  return Number.parseFloat(amount).toLocaleString(undefined, {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })
-}
-
 function formatDate(dateString: string): string {
   const [year, month, day] = dateString.split('-').map(Number)
 
   return new Date(year, month - 1, day).toLocaleDateString()
 }
 
-export function CommitmentCard({ commitment }: CommitmentCardProps) {
+export function CommitmentCard({ commitment, currency }: CommitmentCardProps) {
   const isOneTime = commitment.recurrence === 'one_time'
   const dateLabel = isOneTime ? 'Due date' : 'Start date'
   const dateValue = isOneTime ? commitment.due_date : commitment.start_date
@@ -40,7 +32,7 @@ export function CommitmentCard({ commitment }: CommitmentCardProps) {
         <div className="commitment-card__field">
           <dt className="commitment-card__label">Amount</dt>
           <dd className="commitment-card__value commitment-card__value--amount">
-            {formatAmount(commitment.amount)}
+            {formatCurrency(commitment.amount, currency)}
           </dd>
         </div>
         <div className="commitment-card__field">

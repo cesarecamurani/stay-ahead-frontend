@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react'
 import { getCommitments } from '../../api/commitments.ts'
 import { ApiError } from '../../api/errors.ts'
 import type { Commitment } from '../../api/types.ts'
+import { getCurrentUser } from '../../api/user.ts'
 import { useAuth } from '../../auth/useAuth.ts'
+import { DEFAULT_CURRENCY } from '../../data/currencies.ts'
 import { CommitmentCard } from './CommitmentCard.tsx'
 
 export function CommitmentList() {
   const { token } = useAuth()
   const [commitments, setCommitments] = useState<Commitment[]>([])
+  const [currency, setCurrency] = useState(DEFAULT_CURRENCY)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -20,6 +23,7 @@ export function CommitmentList() {
 
     setIsLoading(true)
     setError(null)
+    setCurrency(DEFAULT_CURRENCY)
 
     getCommitments(token)
       .then((data) => {
@@ -39,6 +43,18 @@ export function CommitmentList() {
       .finally(() => {
         if (!cancelled) {
           setIsLoading(false)
+        }
+      })
+
+    getCurrentUser(token)
+      .then((profile) => {
+        if (!cancelled) {
+          setCurrency(profile.currency)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCurrency(DEFAULT_CURRENCY)
         }
       })
 
@@ -62,7 +78,11 @@ export function CommitmentList() {
   return (
     <div className="commitment-list">
       {commitments.map((commitment) => (
-        <CommitmentCard key={commitment.id} commitment={commitment} />
+        <CommitmentCard
+          key={commitment.id}
+          commitment={commitment}
+          currency={currency}
+        />
       ))}
     </div>
   )
