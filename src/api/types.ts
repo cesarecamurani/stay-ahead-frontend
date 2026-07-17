@@ -4,6 +4,16 @@ export interface User {
   username: string
 }
 
+export interface UserProfile extends User {
+  monthly_income: string | null
+  savings: string | null
+  currency: string
+}
+
+export interface UserProfileResponse {
+  user: UserProfile
+}
+
 export interface AuthResponse {
   user: User
   message: string
@@ -51,6 +61,16 @@ export interface Commitment {
   due_date?: string
   duration_months: number | null
   interest_rate: number | null
+}
+
+export interface CreateCommitmentInput {
+  name: string
+  category: CommitmentCategory
+  recurrence: CommitmentRecurrence
+  amount: number
+  start_date?: string
+  due_date?: string
+  duration_months?: number | null
 }
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'

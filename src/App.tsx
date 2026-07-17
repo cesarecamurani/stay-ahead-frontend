@@ -3,6 +3,7 @@ import { ProtectedRoute } from './components/ProtectedRoute.tsx'
 import { CommitmentsPage } from './pages/CommitmentsPage.tsx'
 import { HomePage } from './pages/HomePage.tsx'
 import { LoginPage } from './pages/LoginPage.tsx'
+import { NewCommitmentPage } from './pages/NewCommitmentPage.tsx'
 import { RegisterPage } from './pages/RegisterPage.tsx'
 
 function App() {
@@ -23,6 +24,14 @@ function App() {
         element={
           <ProtectedRoute>
             <CommitmentsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/commitments/new"
+        element={
+          <ProtectedRoute>
+            <NewCommitmentPage />
           </ProtectedRoute>
         }
       />

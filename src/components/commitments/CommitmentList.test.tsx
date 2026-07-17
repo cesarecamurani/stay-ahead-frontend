@@ -4,10 +4,15 @@ import { ApiError } from '../../api/errors.ts'
 import type { Commitment } from '../../api/types.ts'
 
 const mockGetCommitments = vi.fn()
+const mockGetCurrentUser = vi.fn()
 const mockUseAuth = vi.fn()
 
 vi.mock('../../api/commitments.ts', () => ({
   getCommitments: (...args: unknown[]) => mockGetCommitments(...args),
+}))
+
+vi.mock('../../api/user.ts', () => ({
+  getCurrentUser: (...args: unknown[]) => mockGetCurrentUser(...args),
 }))
 
 vi.mock('../../auth/useAuth.ts', () => ({
@@ -31,7 +36,16 @@ const commitment: Commitment = {
 describe('CommitmentList', () => {
   beforeEach(() => {
     mockGetCommitments.mockReset()
+    mockGetCurrentUser.mockReset()
     mockUseAuth.mockReturnValue({ token: 'jwt-token' })
+    mockGetCurrentUser.mockResolvedValue({
+      id: 'user-1',
+      email: 'user@example.com',
+      username: 'testuser',
+      monthly_income: '5000.00',
+      savings: '10000.00',
+      currency: 'GBP',
+    })
   })
 
   it('shows loading initially', () => {
@@ -62,7 +76,7 @@ describe('CommitmentList', () => {
     })
   })
 
-  it('renders commitment cards when data is returned', async () => {
+  it('renders commitment cards with the user currency', async () => {
     mockGetCommitments.mockResolvedValue([commitment])
 
     render(<CommitmentList />)
@@ -71,6 +85,8 @@ describe('CommitmentList', () => {
       expect(screen.getByText('Rent')).toBeInTheDocument()
     })
 
+    expect(screen.getByText('£1,200.00')).toBeInTheDocument()
     expect(mockGetCommitments).toHaveBeenCalledWith('jwt-token')
+    expect(mockGetCurrentUser).toHaveBeenCalledWith('jwt-token')
   })
 })
