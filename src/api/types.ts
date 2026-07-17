@@ -91,6 +91,18 @@ export interface BreakdownResponse {
   breakdown: Breakdown
 }
 
+export interface ForecastOccurrence {
+  commitment_id: string
+  name: string
+  category: CommitmentCategory
+  date: string
+  amount: string
+}
+
+export interface ForecastsResponse {
+  forecasts: ForecastOccurrence[]
+}
+
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 export interface RequestOptions {

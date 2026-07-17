@@ -11,9 +11,13 @@ export function QuickActions() {
         className="quick-actions__button"
         onClick={() => navigate('/commitments')}
       >
-        View Commitments
+        Commitments
       </Button>
-      <Button type="button" className="quick-actions__button" disabled>
+      <Button
+        type="button"
+        className="quick-actions__button"
+        onClick={() => navigate('/forecast')}
+      >
         Forecast
       </Button>
     </section>

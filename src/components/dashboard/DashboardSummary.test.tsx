@@ -142,6 +142,6 @@ describe('DashboardSummary', () => {
       expect(screen.getByText('Monthly Commitments')).toBeInTheDocument()
     })
 
-    expect(screen.getAllByText('—')).toHaveLength(3)
+    expect(screen.getAllByText('-')).toHaveLength(3)
   })
 })

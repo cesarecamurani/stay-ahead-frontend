@@ -5,13 +5,13 @@ export function formatCurrency(
   currency: string,
 ): string {
   if (amount === null) {
-    return '—'
+    return '-'
   }
 
   const value = Number.parseFloat(amount)
 
   if (!Number.isFinite(value)) {
-    return '—'
+    return '-'
   }
 
   try {

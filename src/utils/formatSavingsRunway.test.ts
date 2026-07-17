@@ -3,12 +3,12 @@ import { formatSavingsRunway } from './formatSavingsRunway.ts'
 
 describe('formatSavingsRunway', () => {
   it('returns an em dash for null', () => {
-    expect(formatSavingsRunway(null)).toBe('—')
+    expect(formatSavingsRunway(null)).toBe('-')
   })
 
   it('returns an em dash for non-finite values', () => {
-    expect(formatSavingsRunway(Number.NaN)).toBe('—')
-    expect(formatSavingsRunway(Number.POSITIVE_INFINITY)).toBe('—')
+    expect(formatSavingsRunway(Number.NaN)).toBe('-')
+    expect(formatSavingsRunway(Number.POSITIVE_INFINITY)).toBe('-')
   })
 
   it('uses the singular form for exactly one month', () => {

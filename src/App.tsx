@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from './components/ProtectedRoute.tsx'
 import { CommitmentsPage } from './pages/CommitmentsPage.tsx'
+import { ForecastPage } from './pages/ForecastPage.tsx'
 import { HomePage } from './pages/HomePage.tsx'
 import { LoginPage } from './pages/LoginPage.tsx'
 import { NewCommitmentPage } from './pages/NewCommitmentPage.tsx'
@@ -32,6 +33,14 @@ function App() {
         element={
           <ProtectedRoute>
             <NewCommitmentPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/forecast"
+        element={
+          <ProtectedRoute>
+            <ForecastPage />
           </ProtectedRoute>
         }
       />
