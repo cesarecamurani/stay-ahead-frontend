@@ -5,7 +5,11 @@ import {
   setStoredAuth,
 } from './tokenStorage.ts'
 
-const user = { id: 1, email: 'user@example.com', username: 'testuser' }
+const user = {
+  id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  email: 'user@example.com',
+  username: 'testuser',
+}
 
 describe('tokenStorage', () => {
   beforeEach(() => {
@@ -29,6 +33,21 @@ describe('tokenStorage', () => {
     })
   })
 
+  it('accepts UUID user ids from the API', () => {
+    const apiUser = {
+      id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+      email: 'user@example.com',
+      username: 'testuser',
+    }
+
+    setStoredAuth('jwt-token', apiUser)
+
+    expect(getStoredAuth()).toEqual({
+      token: 'jwt-token',
+      user: apiUser,
+    })
+  })
+
   it('clears stored auth', () => {
     setStoredAuth('jwt-token', user)
     clearStoredAuth()
@@ -49,7 +68,10 @@ describe('tokenStorage', () => {
     localStorage.setItem('stay_ahead_token', 'jwt-token')
     localStorage.setItem(
       'stay_ahead_user',
-      JSON.stringify({ id: 1, email: 'stored@example.com' }),
+      JSON.stringify({
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'stored@example.com',
+      }),
     )
 
     expect(getStoredAuth()).toBeNull()

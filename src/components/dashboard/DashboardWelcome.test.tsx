@@ -12,7 +12,11 @@ import { DashboardWelcome } from './DashboardWelcome.tsx'
 describe('DashboardWelcome', () => {
   it('renders greeting name using username', () => {
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'user@example.com', username: 'testuser' },
+      user: {
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'user@example.com',
+        username: 'testuser',
+      },
       token: 'jwt-token',
       login: vi.fn(),
       register: vi.fn(),
