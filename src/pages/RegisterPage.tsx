@@ -16,11 +16,17 @@ import {
   formatCurrencyOption,
 } from '../data/currencies.ts'
 import { parseFormattedNumber } from '../utils/formatNumber.ts'
-import { validateEmail, validatePassword } from '../utils/validation.ts'
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from '../utils/validation.ts'
 
 export function RegisterPage() {
   const { register, token } = useAuth()
   const navigate = useNavigate()
+  const [username, setUsername] = useState('')
+  const [usernameError, setUsernameError] = useState<string | null>(null)
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState<string | null>(null)
   const [password, setPassword] = useState('')
@@ -43,16 +49,20 @@ export function RegisterPage() {
     event.preventDefault()
 
     setFormError(null)
+    setUsernameError(null)
     setEmailError(null)
     setPasswordError(null)
     setPasswordConfirmationError(null)
     setMonthlyIncomeError(null)
     setSavingsError(null)
 
+    const normalizedUsername = username.trim().toLowerCase()
+    const usernameValidationError = validateUsername(normalizedUsername)
     const emailValidationError = validateEmail(email)
     const passwordValidationError = validatePassword(password)
 
-    if (emailValidationError || passwordValidationError) {
+    if (usernameValidationError || emailValidationError || passwordValidationError) {
+      setUsernameError(usernameValidationError)
       setEmailError(emailValidationError)
       setPasswordError(passwordValidationError)
 
@@ -82,6 +92,7 @@ export function RegisterPage() {
 
     try {
       await register({
+        username: normalizedUsername,
         email,
         password,
         password_confirmation: passwordConfirmation,
@@ -108,6 +119,24 @@ export function RegisterPage() {
         {formError && <FormError message={formError} />}
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <Input
+            id="username"
+            label="Username"
+            type="text"
+            value={username}
+            onChange={(event) => {
+              setUsername(event.target.value)
+
+              if (usernameError) {
+                setUsernameError(null)
+              }
+            }}
+            required
+            autoComplete="username"
+            autoFocus
+            disabled={isSubmitting}
+            error={usernameError}
+          />
+          <Input
             id="email"
             label="Email"
             type="email"
@@ -121,7 +150,6 @@ export function RegisterPage() {
             }}
             required
             autoComplete="email"
-            autoFocus
             disabled={isSubmitting}
             error={emailError}
           />

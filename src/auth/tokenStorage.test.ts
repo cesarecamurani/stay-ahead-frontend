@@ -5,7 +5,7 @@ import {
   setStoredAuth,
 } from './tokenStorage.ts'
 
-const user = { id: 1, email: 'user@example.com' }
+const user = { id: 1, email: 'user@example.com', username: 'testuser' }
 
 describe('tokenStorage', () => {
   beforeEach(() => {
@@ -39,6 +39,18 @@ describe('tokenStorage', () => {
   it('returns null and clears storage when user JSON is corrupt', () => {
     localStorage.setItem('stay_ahead_token', 'jwt-token')
     localStorage.setItem('stay_ahead_user', 'not-json')
+
+    expect(getStoredAuth()).toBeNull()
+    expect(localStorage.getItem('stay_ahead_token')).toBeNull()
+    expect(localStorage.getItem('stay_ahead_user')).toBeNull()
+  })
+
+  it('returns null and clears storage when stored user is missing username', () => {
+    localStorage.setItem('stay_ahead_token', 'jwt-token')
+    localStorage.setItem(
+      'stay_ahead_user',
+      JSON.stringify({ id: 1, email: 'stored@example.com' }),
+    )
 
     expect(getStoredAuth()).toBeNull()
     expect(localStorage.getItem('stay_ahead_token')).toBeNull()

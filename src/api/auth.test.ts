@@ -14,7 +14,7 @@ describe('auth api', () => {
 
   it('posts login credentials to the login endpoint', async () => {
     const response = {
-      user: { id: 1, email: 'user@example.com' },
+      user: { id: 1, email: 'user@example.com', username: 'testuser' },
       message: 'Logged in',
       token: 'jwt-token',
     }
@@ -29,6 +29,7 @@ describe('auth api', () => {
 
   it('posts nested user params to the users endpoint', async () => {
     const input = {
+      username: 'testuser',
       email: 'user@example.com',
       password: 'secret',
       password_confirmation: 'secret',
@@ -37,7 +38,7 @@ describe('auth api', () => {
       currency: 'EUR',
     }
     const response = {
-      user: { id: 1, email: 'user@example.com' },
+      user: { id: 1, email: 'user@example.com', username: 'testuser' },
       message: 'Registered',
       token: 'jwt-token',
     }

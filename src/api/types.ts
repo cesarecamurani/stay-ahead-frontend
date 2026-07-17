@@ -1,6 +1,7 @@
 export interface User {
   id: number
   email: string
+  username: string
 }
 
 export interface AuthResponse {
@@ -10,6 +11,7 @@ export interface AuthResponse {
 }
 
 export interface RegisterUserInput {
+  username: string
   email: string
   password: string
   password_confirmation: string

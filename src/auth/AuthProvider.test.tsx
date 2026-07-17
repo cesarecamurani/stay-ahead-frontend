@@ -25,6 +25,7 @@ function AuthState() {
         type="button"
         onClick={() =>
           register({
+            username: 'testuser',
             email: 'user@example.com',
             password: 'secret',
             password_confirmation: 'secret',
@@ -52,7 +53,7 @@ function renderAuthProvider() {
 }
 
 const authResponse = {
-  user: { id: 1, email: 'user@example.com' },
+  user: { id: 1, email: 'user@example.com', username: 'testuser' },
   message: 'ok',
   token: 'jwt-token',
 }
@@ -80,13 +81,27 @@ describe('AuthProvider', () => {
     localStorage.setItem('stay_ahead_token', 'stored-token')
     localStorage.setItem(
       'stay_ahead_user',
-      JSON.stringify({ id: 1, email: 'stored@example.com' }),
+      JSON.stringify({ id: 1, email: 'stored@example.com', username: 'storeduser' }),
     )
 
     renderAuthProvider()
 
     expect(screen.getByText('Email: stored@example.com')).toBeInTheDocument()
     expect(screen.getByText('Token: stored-token')).toBeInTheDocument()
+  })
+
+  it('starts unauthenticated when stored user is missing username', () => {
+    localStorage.setItem('stay_ahead_token', 'stored-token')
+    localStorage.setItem(
+      'stay_ahead_user',
+      JSON.stringify({ id: 1, email: 'stored@example.com' }),
+    )
+
+    renderAuthProvider()
+
+    expect(screen.getByText('Email: none')).toBeInTheDocument()
+    expect(screen.getByText('Token: none')).toBeInTheDocument()
+    expect(getStoredAuth()).toBeNull()
   })
 
   it('persists auth state after login', async () => {
@@ -103,7 +118,7 @@ describe('AuthProvider', () => {
 
     expect(getStoredAuth()).toEqual({
       token: 'jwt-token',
-      user: { id: 1, email: 'user@example.com' },
+      user: { id: 1, email: 'user@example.com', username: 'testuser' },
     })
   })
 
@@ -121,7 +136,7 @@ describe('AuthProvider', () => {
 
     expect(getStoredAuth()).toEqual({
       token: 'jwt-token',
-      user: { id: 1, email: 'user@example.com' },
+      user: { id: 1, email: 'user@example.com', username: 'testuser' },
     })
   })
 
@@ -130,7 +145,7 @@ describe('AuthProvider', () => {
     localStorage.setItem('stay_ahead_token', 'stored-token')
     localStorage.setItem(
       'stay_ahead_user',
-      JSON.stringify({ id: 1, email: 'stored@example.com' }),
+      JSON.stringify({ id: 1, email: 'stored@example.com', username: 'storeduser' }),
     )
 
     renderAuthProvider()

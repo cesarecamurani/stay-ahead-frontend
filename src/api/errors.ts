@@ -1,3 +1,21 @@
+export const UNREACHABLE_API_USER_MESSAGE =
+  'Something went wrong. Please try again.'
+
+const UNREACHABLE_API_DEV_MESSAGE =
+  'Cannot reach the API server. Make sure the Rails backend is running and VITE_API_PROXY_TARGET matches its port.'
+
+export function isGatewayError(status: number): boolean {
+  return status === 502 || status === 503 || status === 504
+}
+
+export function getUnreachableApiMessage(): string {
+  if (import.meta.env.DEV) {
+    console.error(UNREACHABLE_API_DEV_MESSAGE)
+  }
+
+  return UNREACHABLE_API_USER_MESSAGE
+}
+
 export class ApiError extends Error {
   status: number
 

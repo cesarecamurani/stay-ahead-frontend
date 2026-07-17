@@ -7,7 +7,9 @@ import { Button } from '../components/ui/Button.tsx'
 import { FormError } from '../components/ui/FormError.tsx'
 import { Input } from '../components/ui/Input.tsx'
 import { PasswordInput } from '../components/ui/PasswordInput.tsx'
-import { validateEmail, validatePassword } from '../utils/validation.ts'
+import { validateEmail } from '../utils/validation.ts'
+
+const INVALID_CREDENTIALS_MESSAGE = 'Invalid email or password.'
 
 export function LoginPage() {
   const { login, token } = useAuth()
@@ -31,7 +33,7 @@ export function LoginPage() {
     setPasswordError(null)
 
     const emailValidationError = validateEmail(email)
-    const passwordValidationError = validatePassword(password)
+    const passwordValidationError = !password ? 'Password is required.' : null
 
     if (emailValidationError || passwordValidationError) {
       setEmailError(emailValidationError)
@@ -47,7 +49,9 @@ export function LoginPage() {
       navigate('/')
     } catch (err) {
       if (err instanceof ApiError) {
-        setFormError(err.message)
+        setFormError(
+          err.status === 401 ? INVALID_CREDENTIALS_MESSAGE : err.message,
+        )
       } else {
         setFormError('Something went wrong. Please try again.')
       }

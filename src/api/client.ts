@@ -1,4 +1,4 @@
-import { ApiError, parseErrorMessages } from './errors'
+import { ApiError, getUnreachableApiMessage, isGatewayError, parseErrorMessages } from './errors'
 import type { RequestOptions } from './types'
 
 function parseErrorMessage(data: unknown): string {
@@ -34,18 +34,27 @@ export async function request<T>(
 
   addAuthorizationHeader(headers, token)
 
-  const response = await fetch(`${baseUrl}${path}`, {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  })
+  let response: Response
+
+  try {
+    response = await fetch(`${baseUrl}${path}`, {
+      method,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    })
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.error('Network request failed:', error)
+    }
+
+    throw new ApiError(getUnreachableApiMessage(), 0)
+  }
 
   if (!response.ok) {
     let message = 'Request failed'
 
-    if (response.status === 502) {
-      message =
-        'Cannot reach the API server. Make sure the Rails backend is running and VITE_API_PROXY_TARGET matches its port.'
+    if (isGatewayError(response.status)) {
+      message = getUnreachableApiMessage()
     } else {
       try {
         const data: unknown = await response.json()
