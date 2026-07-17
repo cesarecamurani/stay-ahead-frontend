@@ -25,6 +25,7 @@ function AuthState() {
         type="button"
         onClick={() =>
           register({
+            username: 'testuser',
             email: 'user@example.com',
             password: 'secret',
             password_confirmation: 'secret',
@@ -52,7 +53,7 @@ function renderAuthProvider() {
 }
 
 const authResponse = {
-  user: { id: 1, email: 'user@example.com' },
+  user: { id: 1, email: 'user@example.com', username: 'testuser' },
   message: 'ok',
   token: 'jwt-token',
 }
@@ -80,7 +81,7 @@ describe('AuthProvider', () => {
     localStorage.setItem('stay_ahead_token', 'stored-token')
     localStorage.setItem(
       'stay_ahead_user',
-      JSON.stringify({ id: 1, email: 'stored@example.com' }),
+      JSON.stringify({ id: 1, email: 'stored@example.com', username: 'storeduser' }),
     )
 
     renderAuthProvider()
@@ -103,7 +104,7 @@ describe('AuthProvider', () => {
 
     expect(getStoredAuth()).toEqual({
       token: 'jwt-token',
-      user: { id: 1, email: 'user@example.com' },
+      user: { id: 1, email: 'user@example.com', username: 'testuser' },
     })
   })
 
@@ -121,7 +122,7 @@ describe('AuthProvider', () => {
 
     expect(getStoredAuth()).toEqual({
       token: 'jwt-token',
-      user: { id: 1, email: 'user@example.com' },
+      user: { id: 1, email: 'user@example.com', username: 'testuser' },
     })
   })
 
@@ -130,7 +131,7 @@ describe('AuthProvider', () => {
     localStorage.setItem('stay_ahead_token', 'stored-token')
     localStorage.setItem(
       'stay_ahead_user',
-      JSON.stringify({ id: 1, email: 'stored@example.com' }),
+      JSON.stringify({ id: 1, email: 'stored@example.com', username: 'storeduser' }),
     )
 
     renderAuthProvider()

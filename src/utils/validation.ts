@@ -2,6 +2,24 @@ export function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 }
 
+export function validateUsername(value: string): string | null {
+  const trimmed = value.trim()
+
+  if (!trimmed) {
+    return 'Username is required.'
+  }
+
+  if (trimmed.length < 3 || trimmed.length > 30) {
+    return 'Username must be between 3 and 30 characters.'
+  }
+
+  if (!/^[a-z0-9_]+$/.test(trimmed.toLowerCase())) {
+    return 'Username can only contain lowercase letters, numbers, and underscores.'
+  }
+
+  return null
+}
+
 export function validateEmail(value: string): string | null {
   if (!value.trim()) {
     return 'Email is required.'

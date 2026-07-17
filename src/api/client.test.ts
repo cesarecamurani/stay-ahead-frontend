@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, parseErrorMessages } from './errors.ts'
+import { ApiError, parseErrorMessages, UNREACHABLE_API_USER_MESSAGE } from './errors.ts'
 import { request } from './client.ts'
 
 function mockFetch(response: Partial<Response> & { json?: () => Promise<unknown> }) {
@@ -144,7 +144,7 @@ describe('request', () => {
     )
   })
 
-  it('throws a helpful ApiError when the API server is unreachable', async () => {
+  it('throws a user-friendly ApiError when the API server is unreachable', async () => {
     mockFetch({
       ok: false,
       status: 502,
@@ -155,10 +155,18 @@ describe('request', () => {
     })
 
     await expect(request('/api/v1/login')).rejects.toEqual(
-      new ApiError(
-        'Cannot reach the API server. Make sure the Rails backend is running and VITE_API_PROXY_TARGET matches its port.',
-        502,
-      ),
+      new ApiError(UNREACHABLE_API_USER_MESSAGE, 502),
+    )
+  })
+
+  it('throws a user-friendly ApiError when the network request fails', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockRejectedValue(new TypeError('Failed to fetch')),
+    )
+
+    await expect(request('/api/v1/login')).rejects.toEqual(
+      new ApiError(UNREACHABLE_API_USER_MESSAGE, 0),
     )
   })
 

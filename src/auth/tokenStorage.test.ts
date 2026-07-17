@@ -5,7 +5,7 @@ import {
   setStoredAuth,
 } from './tokenStorage.ts'
 
-const user = { id: 1, email: 'user@example.com' }
+const user = { id: 1, email: 'user@example.com', username: 'testuser' }
 
 describe('tokenStorage', () => {
   beforeEach(() => {

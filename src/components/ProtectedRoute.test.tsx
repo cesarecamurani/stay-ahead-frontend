@@ -49,7 +49,7 @@ describe('ProtectedRoute', () => {
   it('renders children when the user is authenticated', () => {
     renderProtectedRoute({
       token: 'jwt-token',
-      user: { id: 1, email: 'user@example.com' },
+      user: { id: 1, email: 'user@example.com', username: 'testuser' },
     })
 
     expect(screen.getByText('Protected content')).toBeInTheDocument()
