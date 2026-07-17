@@ -283,7 +283,7 @@ export function CommitmentForm({ onSuccess, onCancel }: CommitmentFormProps) {
             className="auth-form__submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Creating...' : 'Create commitment'}
+            {isSubmitting ? 'Adding...' : 'Add commitment'}
           </Button>
         </div>
       </form>

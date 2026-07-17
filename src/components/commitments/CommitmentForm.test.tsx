@@ -73,7 +73,7 @@ describe('CommitmentForm', () => {
       target: { value: '2026-07-17' },
     })
     await user.type(screen.getByLabelText('Duration months'), '24')
-    await user.click(screen.getByRole('button', { name: 'Create commitment' }))
+    await user.click(screen.getByRole('button', { name: 'Add commitment' }))
 
     await waitFor(() => {
       expect(mockCreateCommitment).toHaveBeenCalledWith('jwt-token', {
@@ -107,7 +107,7 @@ describe('CommitmentForm', () => {
     fireEvent.change(screen.getByLabelText('Due date'), {
       target: { value: '2026-08-01' },
     })
-    await user.click(screen.getByRole('button', { name: 'Create commitment' }))
+    await user.click(screen.getByRole('button', { name: 'Add commitment' }))
 
     await waitFor(() => {
       expect(mockCreateCommitment).toHaveBeenCalledWith('jwt-token', {
@@ -133,7 +133,7 @@ describe('CommitmentForm', () => {
     fireEvent.change(screen.getByLabelText('Start date'), {
       target: { value: '2026-07-17' },
     })
-    await user.click(screen.getByRole('button', { name: 'Create commitment' }))
+    await user.click(screen.getByRole('button', { name: 'Add commitment' }))
 
     await waitFor(() => {
       expect(screen.getByText(/Name can't be blank/)).toBeInTheDocument()
