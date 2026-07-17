@@ -11,7 +11,8 @@ function isStoredUser(value: unknown): value is User {
   const user = value as Record<string, unknown>
 
   return (
-    typeof user.id === 'number' &&
+    typeof user.id === 'string' &&
+    user.id.length > 0 &&
     typeof user.email === 'string' &&
     typeof user.username === 'string' &&
     user.username.length > 0

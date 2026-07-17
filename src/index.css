@@ -503,6 +503,139 @@ a:hover {
   }
 }
 
+/* Commitments page */
+
+.commitments-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.commitments-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  align-self: flex-start;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.commitments-page__back-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.commitments-page__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.commitments-page__subtitle {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.commitment-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.commitment-list__message {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.commitment-list__message--error {
+  color: var(--color-error);
+}
+
+.commitment-card {
+  padding: var(--space-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.commitment-card__name {
+  margin: 0 0 var(--space-md);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.commitment-card__details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+  margin: 0;
+}
+
+.commitment-card__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.commitment-card__label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.commitment-card__value {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.commitment-card__value--amount {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.commitment-status-badge {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius);
+}
+
+.commitment-status-badge--scheduled {
+  background-color: rgba(136, 192, 208, 0.15);
+  color: var(--color-accent);
+}
+
+.commitment-status-badge--active {
+  background-color: rgba(163, 190, 140, 0.2);
+  color: #a3be8c;
+}
+
+.commitment-status-badge--paused {
+  background-color: rgba(235, 203, 139, 0.2);
+  color: #ebcb8b;
+}
+
+.commitment-status-badge--completed {
+  background-color: rgba(216, 222, 233, 0.1);
+  color: var(--color-text-secondary);
+}
+
+.commitment-status-badge--cancelled {
+  background-color: rgba(191, 97, 106, 0.15);
+  color: var(--color-error);
+}
+
+@media (max-width: 640px) {
+  .commitment-card__details {
+    grid-template-columns: 1fr;
+  }
+}
+
 .password-requirements {
   margin-top: -0.5rem;
   margin-bottom: 1rem;

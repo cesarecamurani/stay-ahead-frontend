@@ -14,7 +14,11 @@ describe('auth api', () => {
 
   it('posts login credentials to the login endpoint', async () => {
     const response = {
-      user: { id: 1, email: 'user@example.com', username: 'testuser' },
+      user: {
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'user@example.com',
+        username: 'testuser',
+      },
       message: 'Logged in',
       token: 'jwt-token',
     }
@@ -38,7 +42,11 @@ describe('auth api', () => {
       currency: 'EUR',
     }
     const response = {
-      user: { id: 1, email: 'user@example.com', username: 'testuser' },
+      user: {
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'user@example.com',
+        username: 'testuser',
+      },
       message: 'Registered',
       token: 'jwt-token',
     }
