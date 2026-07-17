@@ -1,0 +1,76 @@
+import { render, screen, waitFor } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ApiError } from '../../api/errors.ts'
+import type { Commitment } from '../../api/types.ts'
+
+const mockGetCommitments = vi.fn()
+const mockUseAuth = vi.fn()
+
+vi.mock('../../api/commitments.ts', () => ({
+  getCommitments: (...args: unknown[]) => mockGetCommitments(...args),
+}))
+
+vi.mock('../../auth/useAuth.ts', () => ({
+  useAuth: () => mockUseAuth(),
+}))
+
+import { CommitmentList } from './CommitmentList.tsx'
+
+const commitment: Commitment = {
+  id: 'abc-123',
+  name: 'Rent',
+  category: 'obligation',
+  recurrence: 'monthly',
+  status: 'active',
+  amount: '1200.00',
+  start_date: '2026-01-01',
+  duration_months: null,
+  interest_rate: null,
+}
+
+describe('CommitmentList', () => {
+  beforeEach(() => {
+    mockGetCommitments.mockReset()
+    mockUseAuth.mockReturnValue({ token: 'jwt-token' })
+  })
+
+  it('shows loading initially', () => {
+    mockGetCommitments.mockReturnValue(new Promise(() => {}))
+
+    render(<CommitmentList />)
+
+    expect(screen.getByText('Loading commitments...')).toBeInTheDocument()
+  })
+
+  it('shows error when fetch fails', async () => {
+    mockGetCommitments.mockRejectedValue(new ApiError('Failed to load', 500))
+
+    render(<CommitmentList />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Failed to load')).toBeInTheDocument()
+    })
+  })
+
+  it('shows empty state when no commitments', async () => {
+    mockGetCommitments.mockResolvedValue([])
+
+    render(<CommitmentList />)
+
+    await waitFor(() => {
+      expect(screen.getByText('No commitments yet.')).toBeInTheDocument()
+    })
+  })
+
+  it('renders commitment cards when data is returned', async () => {
+    mockGetCommitments.mockResolvedValue([commitment])
+
+    render(<CommitmentList />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Rent')).toBeInTheDocument()
+    })
+
+    expect(mockGetCommitments).toHaveBeenCalledWith('jwt-token')
+  })
+})

@@ -130,10 +130,10 @@ describe('AuthProvider', () => {
     expect(getStoredAuth()).toEqual({
       token: 'jwt-token',
       user: {
-    id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-    email: 'user@example.com',
-    username: 'testuser',
-  },
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'user@example.com',
+        username: 'testuser',
+      },
     })
   })
 
@@ -152,10 +152,10 @@ describe('AuthProvider', () => {
     expect(getStoredAuth()).toEqual({
       token: 'jwt-token',
       user: {
-    id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-    email: 'user@example.com',
-    username: 'testuser',
-  },
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'user@example.com',
+        username: 'testuser',
+      },
     })
   })
 

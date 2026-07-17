@@ -23,7 +23,9 @@ function formatAmount(amount: string, currency = DEFAULT_CURRENCY): string {
 }
 
 function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString()
+  const [year, month, day] = dateString.split('-').map(Number)
+
+  return new Date(year, month - 1, day).toLocaleDateString()
 }
 
 export function CommitmentCard({ commitment }: CommitmentCardProps) {
