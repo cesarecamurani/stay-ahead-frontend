@@ -23,6 +23,7 @@ export function CommitmentList() {
 
     setIsLoading(true)
     setError(null)
+    setCurrency(DEFAULT_CURRENCY)
 
     getCommitments(token)
       .then((data) => {
@@ -51,7 +52,11 @@ export function CommitmentList() {
           setCurrency(profile.currency)
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        if (!cancelled) {
+          setCurrency(DEFAULT_CURRENCY)
+        }
+      })
 
     return () => {
       cancelled = true

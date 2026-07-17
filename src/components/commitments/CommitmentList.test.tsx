@@ -20,6 +20,7 @@ vi.mock('../../auth/useAuth.ts', () => ({
 }))
 
 import { CommitmentList } from './CommitmentList.tsx'
+import { formatCurrency } from '../../utils/formatCurrency.ts'
 
 const commitment: Commitment = {
   id: 'abc-123',
@@ -85,7 +86,9 @@ describe('CommitmentList', () => {
       expect(screen.getByText('Rent')).toBeInTheDocument()
     })
 
-    expect(screen.getByText('£1,200.00')).toBeInTheDocument()
+    expect(
+      screen.getByText(formatCurrency(commitment.amount, 'GBP')),
+    ).toBeInTheDocument()
     expect(mockGetCommitments).toHaveBeenCalledWith('jwt-token')
     expect(mockGetCurrentUser).toHaveBeenCalledWith('jwt-token')
   })

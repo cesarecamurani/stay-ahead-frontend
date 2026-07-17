@@ -15,6 +15,7 @@ vi.mock('../../auth/useAuth.ts', () => ({
 }))
 
 import { DashboardSummary } from './DashboardSummary.tsx'
+import { formatCurrency } from '../../utils/formatCurrency.ts'
 
 const profile: UserProfile = {
   id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -59,8 +60,12 @@ describe('DashboardSummary', () => {
     })
 
     expect(screen.getByText('Savings')).toBeInTheDocument()
-    expect(screen.getByText('£5,000.00')).toBeInTheDocument()
-    expect(screen.getByText('£10,000.00')).toBeInTheDocument()
+    expect(
+      screen.getByText(formatCurrency(profile.monthly_income, profile.currency)),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(formatCurrency(profile.savings, profile.currency)),
+    ).toBeInTheDocument()
     expect(mockGetCurrentUser).toHaveBeenCalledWith('jwt-token')
   })
 })
