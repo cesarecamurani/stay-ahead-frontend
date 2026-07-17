@@ -73,6 +73,24 @@ export interface CreateCommitmentInput {
   duration_months?: number | null
 }
 
+export interface FinancialSummary {
+  monthly_income: string | null
+  savings: string | null
+  monthly_commitments_amount: string | null
+  available_cash_flow: string | null
+  savings_runway_months: number | null
+}
+
+export interface FinancialSummaryResponse {
+  summary: FinancialSummary
+}
+
+export type Breakdown = Record<CommitmentCategory, string>
+
+export interface BreakdownResponse {
+  breakdown: Breakdown
+}
+
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
 export interface RequestOptions {

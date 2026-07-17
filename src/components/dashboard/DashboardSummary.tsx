@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
-import { getCurrentUser } from '../../api/user.ts'
 import { ApiError } from '../../api/errors.ts'
-import type { UserProfile } from '../../api/types.ts'
+import { getSummary } from '../../api/summary.ts'
+import type { FinancialSummary, UserProfile } from '../../api/types.ts'
+import { getCurrentUser } from '../../api/user.ts'
 import { useAuth } from '../../auth/useAuth.ts'
 import { formatCurrency } from '../../utils/formatCurrency.ts'
+import { formatSavingsRunway } from '../../utils/formatSavingsRunway.ts'
 import { SummaryCard } from './SummaryCard.tsx'
 
 export function DashboardSummary() {
   const { token } = useAuth()
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [summary, setSummary] = useState<FinancialSummary | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -22,10 +25,11 @@ export function DashboardSummary() {
     setIsLoading(true)
     setError(null)
 
-    getCurrentUser(token)
-      .then((data) => {
+    Promise.all([getCurrentUser(token), getSummary(token)])
+      .then(([profileData, summaryData]) => {
         if (!cancelled) {
-          setProfile(data)
+          setProfile(profileData)
+          setSummary(summaryData)
         }
       })
       .catch((err) => {
@@ -51,6 +55,7 @@ export function DashboardSummary() {
   if (isLoading) {
     return (
       <section className="dashboard-section">
+        <h2 className="dashboard-section__title">Summary</h2>
         <p className="dashboard-summary__message">Loading summary...</p>
       </section>
     )
@@ -59,6 +64,7 @@ export function DashboardSummary() {
   if (error) {
     return (
       <section className="dashboard-section">
+        <h2 className="dashboard-section__title">Summary</h2>
         <p className="dashboard-summary__message dashboard-summary__message--error">
           {error}
         </p>
@@ -66,12 +72,13 @@ export function DashboardSummary() {
     )
   }
 
-  if (!profile) {
+  if (!profile || !summary) {
     return null
   }
 
   return (
     <section className="dashboard-section">
+      <h2 className="dashboard-section__title">Summary</h2>
       <div className="summary-cards">
         <SummaryCard
           label="Monthly Income"
@@ -80,6 +87,21 @@ export function DashboardSummary() {
         <SummaryCard
           label="Savings"
           value={formatCurrency(profile.savings, profile.currency)}
+        />
+        <SummaryCard
+          label="Monthly Commitments"
+          value={formatCurrency(
+            summary.monthly_commitments_amount,
+            profile.currency,
+          )}
+        />
+        <SummaryCard
+          label="Available Cash Flow"
+          value={formatCurrency(summary.available_cash_flow, profile.currency)}
+        />
+        <SummaryCard
+          label="Savings Runway"
+          value={formatSavingsRunway(summary.savings_runway_months)}
         />
       </div>
     </section>
