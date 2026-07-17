@@ -9,11 +9,11 @@ describe('formatCurrency', () => {
     expect(formatted).toMatch(/€|EUR/)
   })
 
-  it('returns an em dash when amount is null', () => {
+  it('returns a dash when amount is null', () => {
     expect(formatCurrency(null, 'EUR')).toBe('-')
   })
 
-  it('returns an em dash for non-numeric amounts', () => {
+  it('returns a dash for non-numeric amounts', () => {
     expect(formatCurrency('not-a-number', 'EUR')).toBe('-')
     expect(formatCurrency('', 'EUR')).toBe('-')
   })

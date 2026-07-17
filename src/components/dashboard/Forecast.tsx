@@ -19,9 +19,12 @@ function formatIsoDate(date: Date): string {
 }
 
 function addMonths(date: Date, months: number): Date {
-  const result = new Date(date)
-  result.setMonth(result.getMonth() + months)
-  return result
+  const year = date.getFullYear()
+  const month = date.getMonth() + months
+  const day = date.getDate()
+  const lastDayOfTargetMonth = new Date(year, month + 1, 0).getDate()
+
+  return new Date(year, month, Math.min(day, lastDayOfTargetMonth))
 }
 
 function getRangeDates(months: ForecastRangeMonths): { from: string; to: string } {
@@ -56,10 +59,12 @@ function groupByDate(
     }
   }
 
-  return Array.from(groups.entries()).map(([date, items]) => ({
-    date,
-    occurrences: items,
-  }))
+  return Array.from(groups.entries())
+    .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+    .map(([date, items]) => ({
+      date,
+      occurrences: items,
+    }))
 }
 
 export function Forecast() {
@@ -76,19 +81,39 @@ export function Forecast() {
     }
 
     let cancelled = false
+
+    getCurrentUser(token)
+      .then((profile) => {
+        if (!cancelled) {
+          setCurrency(profile.currency)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setCurrency(DEFAULT_CURRENCY)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [token])
+
+  useEffect(() => {
+    if (!token) {
+      return
+    }
+
+    let cancelled = false
     const { from, to } = getRangeDates(range)
 
     setIsLoading(true)
     setError(null)
 
-    Promise.all([
-      getForecasts(token, from, to),
-      getCurrentUser(token).catch(() => null),
-    ])
-      .then(([forecastData, profile]) => {
+    getForecasts(token, from, to)
+      .then((forecastData) => {
         if (!cancelled) {
           setForecasts(forecastData)
-          setCurrency(profile?.currency ?? DEFAULT_CURRENCY)
         }
       })
       .catch((err) => {

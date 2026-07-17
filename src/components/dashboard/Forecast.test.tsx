@@ -57,13 +57,18 @@ function formatIsoDate(date: Date): string {
 }
 
 function addMonths(date: Date, months: number): Date {
-  const result = new Date(date)
-  result.setMonth(result.getMonth() + months)
-  return result
+  const year = date.getFullYear()
+  const month = date.getMonth() + months
+  const day = date.getDate()
+  const lastDayOfTargetMonth = new Date(year, month + 1, 0).getDate()
+
+  return new Date(year, month, Math.min(day, lastDayOfTargetMonth))
 }
 
-function expectedRange(months: number): { from: string; to: string } {
-  const today = new Date()
+function expectedRange(
+  months: number,
+  today: Date,
+): { from: string; to: string } {
   return {
     from: formatIsoDate(today),
     to: formatIsoDate(addMonths(today, months)),
@@ -118,6 +123,7 @@ describe('Forecast', () => {
   })
 
   it('renders occurrences grouped by date with category and amount', async () => {
+    const today = new Date()
     mockGetForecasts.mockResolvedValue(forecasts)
     mockGetCurrentUser.mockResolvedValue(profile)
 
@@ -140,7 +146,7 @@ describe('Forecast', () => {
       screen.getByText(formatCurrency('18.00', profile.currency)),
     ).toBeInTheDocument()
 
-    const { from, to } = expectedRange(3)
+    const { from, to } = expectedRange(3, today)
     expect(mockGetForecasts).toHaveBeenCalledWith('jwt-token', from, to)
     expect(mockGetCurrentUser).toHaveBeenCalledWith('jwt-token')
   })
@@ -175,8 +181,41 @@ describe('Forecast', () => {
     expect(screen.queryAllByRole('heading', { name: '01 Aug 2026' })).toHaveLength(1)
   })
 
+  it('renders date groups in chronological order', async () => {
+    mockGetForecasts.mockResolvedValue([
+      {
+        commitment_id: 'c2',
+        name: 'Netflix',
+        category: 'service',
+        date: '2026-08-05',
+        amount: '18.00',
+      },
+      {
+        commitment_id: 'c1',
+        name: 'Rent',
+        category: 'obligation',
+        date: '2026-08-01',
+        amount: '900.00',
+      },
+    ])
+    mockGetCurrentUser.mockResolvedValue(profile)
+
+    render(<Forecast />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Rent')).toBeInTheDocument()
+    })
+
+    const headings = screen.getAllByRole('heading', { level: 3 })
+    expect(headings.map((heading) => heading.textContent)).toEqual([
+      '01 Aug 2026',
+      '05 Aug 2026',
+    ])
+  })
+
   it('refetches with a new range when the selector changes', async () => {
     const user = userEvent.setup()
+    const today = new Date()
     mockGetForecasts.mockResolvedValue(forecasts)
     mockGetCurrentUser.mockResolvedValue(profile)
 
@@ -186,12 +225,13 @@ describe('Forecast', () => {
       expect(screen.getByText('Rent')).toBeInTheDocument()
     })
 
-    const { from: defaultFrom, to: defaultTo } = expectedRange(3)
+    const { from: defaultFrom, to: defaultTo } = expectedRange(3, today)
     expect(mockGetForecasts).toHaveBeenCalledWith(
       'jwt-token',
       defaultFrom,
       defaultTo,
     )
+    expect(mockGetCurrentUser).toHaveBeenCalledTimes(1)
 
     mockGetForecasts.mockResolvedValue([])
     await user.click(screen.getByRole('button', { name: 'Next month' }))
@@ -202,8 +242,9 @@ describe('Forecast', () => {
       ).toBeInTheDocument()
     })
 
-    const { from, to } = expectedRange(1)
+    const { from, to } = expectedRange(1, today)
     expect(mockGetForecasts).toHaveBeenLastCalledWith('jwt-token', from, to)
+    expect(mockGetCurrentUser).toHaveBeenCalledTimes(1)
   })
 
   it('falls back to the default currency when the profile request fails', async () => {

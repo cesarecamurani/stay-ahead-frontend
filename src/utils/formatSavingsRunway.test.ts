@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { formatSavingsRunway } from './formatSavingsRunway.ts'
 
 describe('formatSavingsRunway', () => {
-  it('returns an em dash for null', () => {
+  it('returns a dash for null', () => {
     expect(formatSavingsRunway(null)).toBe('-')
   })
 
-  it('returns an em dash for non-finite values', () => {
+  it('returns a dash for non-finite values', () => {
     expect(formatSavingsRunway(Number.NaN)).toBe('-')
     expect(formatSavingsRunway(Number.POSITIVE_INFINITY)).toBe('-')
   })

@@ -127,7 +127,7 @@ describe('DashboardSummary', () => {
     expect(mockGetSummary).toHaveBeenCalledWith('jwt-token')
   })
 
-  it('shows an em dash when summary metrics are null', async () => {
+  it('shows a dash when summary metrics are null', async () => {
     mockGetCurrentUser.mockResolvedValue(profile)
     mockGetSummary.mockResolvedValue({
       ...summary,
