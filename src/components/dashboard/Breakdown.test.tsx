@@ -124,4 +124,40 @@ describe('Breakdown', () => {
     const zeroAmount = formatCurrency('0.00', profile.currency)
     expect(screen.getAllByText(zeroAmount)).toHaveLength(4)
   })
+
+  it('keeps loading until both requests settle', async () => {
+    let resolveProfile: (value: UserProfile) => void = () => {}
+    mockGetBreakdown.mockResolvedValue(breakdown)
+    mockGetCurrentUser.mockReturnValue(
+      new Promise<UserProfile>((resolve) => {
+        resolveProfile = resolve
+      }),
+    )
+
+    render(<Breakdown />)
+
+    expect(screen.getByText('Loading breakdown...')).toBeInTheDocument()
+    expect(screen.queryByText('Obligations')).not.toBeInTheDocument()
+
+    resolveProfile(profile)
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(formatCurrency(breakdown.obligation, profile.currency)),
+      ).toBeInTheDocument()
+    })
+  })
+
+  it('falls back to the default currency when the profile request fails', async () => {
+    mockGetBreakdown.mockResolvedValue(breakdown)
+    mockGetCurrentUser.mockRejectedValue(new ApiError('Profile unavailable', 500))
+
+    render(<Breakdown />)
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(formatCurrency(breakdown.obligation, 'EUR')),
+      ).toBeInTheDocument()
+    })
+  })
 })

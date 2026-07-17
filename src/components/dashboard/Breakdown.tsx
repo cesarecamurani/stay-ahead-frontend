@@ -34,12 +34,15 @@ export function Breakdown() {
 
     setIsLoading(true)
     setError(null)
-    setCurrency(DEFAULT_CURRENCY)
 
-    getBreakdown(token)
-      .then((data) => {
+    Promise.all([
+      getBreakdown(token),
+      getCurrentUser(token).catch(() => null),
+    ])
+      .then(([breakdownData, profile]) => {
         if (!cancelled) {
-          setBreakdown(data)
+          setBreakdown(breakdownData)
+          setCurrency(profile?.currency ?? DEFAULT_CURRENCY)
         }
       })
       .catch((err) => {
@@ -54,18 +57,6 @@ export function Breakdown() {
       .finally(() => {
         if (!cancelled) {
           setIsLoading(false)
-        }
-      })
-
-    getCurrentUser(token)
-      .then((profile) => {
-        if (!cancelled) {
-          setCurrency(profile.currency)
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setCurrency(DEFAULT_CURRENCY)
         }
       })
 
@@ -104,7 +95,7 @@ export function Breakdown() {
           <BreakdownItem
             key={key}
             label={label}
-            value={formatCurrency(breakdown[key] ?? '0.00', currency)}
+            value={formatCurrency(breakdown[key], currency)}
           />
         ))}
       </div>
