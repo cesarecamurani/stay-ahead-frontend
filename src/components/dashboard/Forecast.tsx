@@ -107,9 +107,6 @@ export function Forecast() {
     let cancelled = false
     const { from, to } = getRangeDates(range)
 
-    setIsLoading(true)
-    setError(null)
-
     getForecasts(token, from, to)
       .then((forecastData) => {
         if (!cancelled) {
@@ -136,9 +133,15 @@ export function Forecast() {
     }
   }, [token, range])
 
+  function handleRangeChange(nextRange: ForecastRangeMonths) {
+    setIsLoading(true)
+    setError(null)
+    setRange(nextRange)
+  }
+
   return (
     <section className="dashboard-section">
-      <ForecastRangeSelector value={range} onChange={setRange} />
+      <ForecastRangeSelector value={range} onChange={handleRangeChange} />
 
       {isLoading && <p className="forecast__message">Loading forecast...</p>}
 

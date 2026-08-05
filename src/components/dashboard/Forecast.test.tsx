@@ -233,8 +233,17 @@ describe('Forecast', () => {
     )
     expect(mockGetCurrentUser).toHaveBeenCalledTimes(1)
 
-    mockGetForecasts.mockResolvedValue([])
+    let resolveForecast: (value: ForecastOccurrence[]) => void
+    mockGetForecasts.mockReturnValue(
+      new Promise((resolve) => {
+        resolveForecast = resolve
+      }),
+    )
     await user.click(screen.getByRole('button', { name: 'Next month' }))
+
+    expect(screen.getByText('Loading forecast...')).toBeInTheDocument()
+
+    resolveForecast!([])
 
     await waitFor(() => {
       expect(
