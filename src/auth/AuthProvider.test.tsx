@@ -1,7 +1,8 @@
-import { cleanup, render, screen, waitFor } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as authApi from '../api/auth.ts'
+import { notifyUnauthorized } from '../api/unauthorized.ts'
 import { AuthProvider } from './AuthProvider.tsx'
 import { useAuth } from './useAuth.ts'
 import { getStoredAuth } from './tokenStorage.ts'
@@ -12,12 +13,13 @@ vi.mock('../api/auth.ts', () => ({
 }))
 
 function AuthState() {
-  const { user, token, login, register, logout } = useAuth()
+  const { user, token, sessionExpired, login, register, logout } = useAuth()
 
   return (
     <div>
       <p>Email: {user?.email ?? 'none'}</p>
       <p>Token: {token ?? 'none'}</p>
+      <p>Session expired: {sessionExpired ? 'yes' : 'no'}</p>
       <button type="button" onClick={() => login('user@example.com', 'secret')}>
         Log in
       </button>
@@ -176,6 +178,70 @@ describe('AuthProvider', () => {
 
     expect(screen.getByText('Email: none')).toBeInTheDocument()
     expect(screen.getByText('Token: none')).toBeInTheDocument()
+    expect(screen.getByText('Session expired: no')).toBeInTheDocument()
     expect(getStoredAuth()).toBeNull()
+  })
+
+  it('expires the current authenticated session', () => {
+    localStorage.setItem('stay_ahead_token', 'stored-token')
+    localStorage.setItem(
+      'stay_ahead_user',
+      JSON.stringify({
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'stored@example.com',
+        username: 'storeduser',
+      }),
+    )
+
+    renderAuthProvider()
+    act(() => notifyUnauthorized('stored-token'))
+
+    expect(screen.getByText('Email: none')).toBeInTheDocument()
+    expect(screen.getByText('Token: none')).toBeInTheDocument()
+    expect(screen.getByText('Session expired: yes')).toBeInTheDocument()
+    expect(getStoredAuth()).toBeNull()
+  })
+
+  it('ignores a late unauthorized response for an older token', () => {
+    localStorage.setItem('stay_ahead_token', 'current-token')
+    localStorage.setItem(
+      'stay_ahead_user',
+      JSON.stringify({
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'stored@example.com',
+        username: 'storeduser',
+      }),
+    )
+
+    renderAuthProvider()
+    act(() => notifyUnauthorized('older-token'))
+
+    expect(screen.getByText('Email: stored@example.com')).toBeInTheDocument()
+    expect(screen.getByText('Token: current-token')).toBeInTheDocument()
+    expect(screen.getByText('Session expired: no')).toBeInTheDocument()
+    expect(getStoredAuth()?.token).toBe('current-token')
+  })
+
+  it('clears the expired-session state after a new login', async () => {
+    const user = userEvent.setup()
+    localStorage.setItem('stay_ahead_token', 'stored-token')
+    localStorage.setItem(
+      'stay_ahead_user',
+      JSON.stringify({
+        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        email: 'stored@example.com',
+        username: 'storeduser',
+      }),
+    )
+    vi.mocked(authApi.login).mockResolvedValue(authResponse)
+
+    renderAuthProvider()
+    act(() => notifyUnauthorized('stored-token'))
+    await user.click(screen.getByRole('button', { name: 'Log in' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Token: jwt-token')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Session expired: no')).toBeInTheDocument()
   })
 })

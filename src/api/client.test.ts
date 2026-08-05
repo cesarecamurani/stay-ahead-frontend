@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ApiError, parseErrorMessages, UNREACHABLE_API_USER_MESSAGE } from './errors.ts'
 import { request } from './client.ts'
+import { registerUnauthorizedHandler } from './unauthorized.ts'
 
 function mockFetch(response: Partial<Response> & { json?: () => Promise<unknown> }) {
   vi.stubGlobal(
@@ -15,11 +16,15 @@ function mockFetch(response: Partial<Response> & { json?: () => Promise<unknown>
 }
 
 describe('request', () => {
+  let unregisterUnauthorizedHandler: (() => void) | undefined
+
   beforeEach(() => {
     vi.stubEnv('VITE_API_BASE_URL', '')
   })
 
   afterEach(() => {
+    unregisterUnauthorizedHandler?.()
+    unregisterUnauthorizedHandler = undefined
     vi.unstubAllGlobals()
     vi.unstubAllEnvs()
   })
@@ -130,6 +135,41 @@ describe('request', () => {
     await expect(request('/api/v1/login')).rejects.toEqual(
       new ApiError('Invalid email or password', 401),
     )
+  })
+
+  it('notifies the unauthorized handler when an authenticated request returns 401', async () => {
+    const handleUnauthorized = vi.fn()
+    unregisterUnauthorizedHandler = registerUnauthorizedHandler(
+      handleUnauthorized,
+    )
+    mockFetch({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: 'unauthorized' }),
+    })
+
+    await expect(
+      request('/api/v1/me', { token: 'expired-token' }),
+    ).rejects.toEqual(new ApiError('unauthorized', 401))
+    expect(handleUnauthorized).toHaveBeenCalledOnce()
+    expect(handleUnauthorized).toHaveBeenCalledWith('expired-token')
+  })
+
+  it('does not notify the unauthorized handler for an unauthenticated 401', async () => {
+    const handleUnauthorized = vi.fn()
+    unregisterUnauthorizedHandler = registerUnauthorizedHandler(
+      handleUnauthorized,
+    )
+    mockFetch({
+      ok: false,
+      status: 401,
+      json: async () => ({ error: 'invalid_credentials' }),
+    })
+
+    await expect(request('/api/v1/login')).rejects.toEqual(
+      new ApiError('invalid_credentials', 401),
+    )
+    expect(handleUnauthorized).not.toHaveBeenCalled()
   })
 
   it('throws ApiError with a message field', async () => {

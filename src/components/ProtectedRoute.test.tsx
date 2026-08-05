@@ -9,6 +9,7 @@ function renderProtectedRoute(auth: Partial<AuthContextValue> = {}) {
   const value: AuthContextValue = {
     user: null,
     token: null,
+    sessionExpired: false,
     login: async () => {},
     register: async () => {},
     logout: () => {},
