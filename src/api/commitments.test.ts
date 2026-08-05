@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { createCommitment, getCommitments } from './commitments.ts'
+import {
+  cancelCommitment,
+  createCommitment,
+  getCommitments,
+  pauseCommitment,
+  resumeCommitment,
+} from './commitments.ts'
 
 const mockRequest = vi.hoisted(() => vi.fn())
 
@@ -62,5 +68,38 @@ describe('commitments api', () => {
       token: 'jwt-token',
       body: { commitment: input },
     })
+  })
+
+  it.each([
+    ['pause', pauseCommitment],
+    ['resume', resumeCommitment],
+    ['cancel', cancelCommitment],
+  ])('posts the %s lifecycle action with the auth token', async (action, transition) => {
+    const updated = {
+      id: 'abc/123',
+      name: 'Rent',
+      category: 'obligation',
+      recurrence: 'monthly',
+      status:
+        action === 'pause'
+          ? 'paused'
+          : action === 'resume'
+            ? 'active'
+            : 'cancelled',
+      amount: '1200.00',
+      start_date: '2026-01-01',
+      duration_months: null,
+      interest_rate: null,
+    }
+    mockRequest.mockResolvedValue(updated)
+
+    await expect(transition('jwt-token', 'abc/123')).resolves.toEqual(updated)
+    expect(mockRequest).toHaveBeenCalledWith(
+      `/api/v1/commitments/abc%2F123/${action}`,
+      {
+        method: 'POST',
+        token: 'jwt-token',
+      },
+    )
   })
 })
