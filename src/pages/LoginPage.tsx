@@ -10,9 +10,11 @@ import { PasswordInput } from '../components/ui/PasswordInput.tsx'
 import { validateEmail } from '../utils/validation.ts'
 
 const INVALID_CREDENTIALS_MESSAGE = 'Invalid email or password.'
+const SESSION_EXPIRED_MESSAGE =
+  'Your session has expired. Please log in again.'
 
 export function LoginPage() {
-  const { login, token } = useAuth()
+  const { login, sessionExpired, token } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState<string | null>(null)
@@ -24,6 +26,9 @@ export function LoginPage() {
   if (token) {
     return <Navigate to="/" replace />
   }
+
+  const displayedFormError =
+    formError ?? (sessionExpired ? SESSION_EXPIRED_MESSAGE : null)
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -64,7 +69,7 @@ export function LoginPage() {
     <Layout>
       <div className="auth-card">
         <h1>Log in</h1>
-        {formError && <FormError message={formError} />}
+        {displayedFormError && <FormError message={displayedFormError} />}
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <Input
             id="email"

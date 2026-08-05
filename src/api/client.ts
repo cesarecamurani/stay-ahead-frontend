@@ -1,5 +1,6 @@
 import { ApiError, getUnreachableApiMessage, isGatewayError, parseErrorMessages } from './errors'
 import type { RequestOptions } from './types'
+import { notifyUnauthorized } from './unauthorized'
 
 function parseErrorMessage(data: unknown): string {
   return parseErrorMessages(data).join('\n')
@@ -51,6 +52,10 @@ export async function request<T>(
   }
 
   if (!response.ok) {
+    if (response.status === 401 && token) {
+      notifyUnauthorized(token)
+    }
+
     let message = 'Request failed'
 
     if (isGatewayError(response.status)) {
