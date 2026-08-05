@@ -43,6 +43,8 @@ export type CommitmentStatus =
   | 'completed'
   | 'cancelled'
 
+export type CommitmentLifecycleAction = 'pause' | 'resume' | 'cancel'
+
 export type CommitmentRecurrence =
   | 'one_time'
   | 'weekly'
