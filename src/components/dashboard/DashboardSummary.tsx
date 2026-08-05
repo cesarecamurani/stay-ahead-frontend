@@ -22,9 +22,6 @@ export function DashboardSummary() {
 
     let cancelled = false
 
-    setIsLoading(true)
-    setError(null)
-
     Promise.all([getCurrentUser(token), getSummary(token)])
       .then(([profileData, summaryData]) => {
         if (!cancelled) {

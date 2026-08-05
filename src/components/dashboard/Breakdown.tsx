@@ -32,9 +32,6 @@ export function Breakdown() {
 
     let cancelled = false
 
-    setIsLoading(true)
-    setError(null)
-
     Promise.all([
       getBreakdown(token),
       getCurrentUser(token).catch(() => null),

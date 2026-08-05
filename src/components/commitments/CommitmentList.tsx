@@ -21,10 +21,6 @@ export function CommitmentList() {
 
     let cancelled = false
 
-    setIsLoading(true)
-    setError(null)
-    setCurrency(DEFAULT_CURRENCY)
-
     getCommitments(token)
       .then((data) => {
         if (!cancelled) {
