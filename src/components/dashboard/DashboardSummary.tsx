@@ -82,7 +82,7 @@ export function DashboardSummary() {
           value={formatCurrency(profile.monthly_income, profile.currency)}
         />
         <SummaryCard
-          label="Savings"
+          label="Total Savings"
           value={formatCurrency(profile.savings, profile.currency)}
         />
         <SummaryCard

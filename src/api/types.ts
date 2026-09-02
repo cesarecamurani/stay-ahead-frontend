@@ -15,6 +15,12 @@ export interface UserProfileResponse {
   user: UserProfile
 }
 
+export interface UpdateUserProfileInput {
+  monthly_income: number
+  savings: number
+  protected_savings: number
+}
+
 export interface AuthResponse {
   user: User
   message: string

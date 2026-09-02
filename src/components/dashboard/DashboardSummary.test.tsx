@@ -90,7 +90,7 @@ describe('DashboardSummary', () => {
       expect(screen.getByText('Monthly Income')).toBeInTheDocument()
     })
 
-    expect(screen.getByText('Savings')).toBeInTheDocument()
+    expect(screen.getByText('Total Savings')).toBeInTheDocument()
     expect(screen.getByText('Protected Savings')).toBeInTheDocument()
     expect(screen.getByText('Monthly Commitments')).toBeInTheDocument()
     expect(screen.getByText('Available Cash Flow')).toBeInTheDocument()
