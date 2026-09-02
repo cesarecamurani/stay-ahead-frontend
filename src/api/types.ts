@@ -84,6 +84,19 @@ export interface CreateCommitmentInput {
   duration_months?: number | null
 }
 
+export interface CommitmentAssessment {
+  affordable: boolean
+  overexposed: boolean
+  worst_case_date: string
+  projected_monthly_commitments: string | null
+  remaining_monthly_cash_flow: string | null
+  remaining_spendable_savings: string
+}
+
+export interface CommitmentAssessmentResponse {
+  assessment: CommitmentAssessment
+}
+
 export interface FinancialSummary {
   monthly_income: string | null
   savings: string | null

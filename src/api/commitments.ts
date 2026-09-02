@@ -1,6 +1,8 @@
 import { request } from './client.ts'
 import type {
   Commitment,
+  CommitmentAssessment,
+  CommitmentAssessmentResponse,
   CommitmentLifecycleAction,
   CreateCommitmentInput,
 } from './types.ts'
@@ -18,6 +20,22 @@ export function createCommitment(
     token,
     body: { commitment: input },
   })
+}
+
+export async function assessCommitment(
+  token: string,
+  input: CreateCommitmentInput,
+): Promise<CommitmentAssessment> {
+  const response = await request<CommitmentAssessmentResponse>(
+    '/api/v1/commitments/assessment',
+    {
+      method: 'POST',
+      token,
+      body: { commitment: input },
+    },
+  )
+
+  return response.assessment
 }
 
 function transitionCommitment(
