@@ -1,49 +1,37 @@
 # Stay Ahead Frontend
 
-Frontend application for **Stay Ahead**, a personal finance tool designed to help users understand upcoming financial commitments and plan ahead.
+React and TypeScript frontend for **Stay Ahead**, a personal finance application that helps users understand their commitments and decide whether they can afford a new one.
 
-This repository will become the React + TypeScript client for the Stay Ahead API backend.
+The Rails API lives in the [Stay Ahead backend repository](https://github.com/cesarecamurani/stay-ahead).
 
-## Vision
+## Current Features
 
-Stay Ahead helps users answer a simple question:
+- Registration, login, logout, protected routes, and expired-session handling
+- Financial dashboard with monthly income, total and protected savings, monthly commitments, available cash flow, savings runway, and a category breakdown
+- Profile updates for income, total savings, and protected savings
+- Recurring and one-time commitments
+- Commitment lifecycle actions: pause, resume, and cancel
+- Forecasts covering the next 1, 3, 6, or 12 months
+- Affordability checks before creating a commitment:
+  - Recurring commitments are evaluated against active and scheduled commitments over the proposed lifetime
+  - One-time expenses are evaluated against savings available above the protected amount
+  - Savings commitments add to total savings while recurring contributions still reduce available monthly cash flow
+  - Assessments are advisory, so users can proceed after an over-budget warning
 
-> "Can I afford my future commitments?"
-
-The application focuses on modelling financial events, understanding when money will leave an account, and providing a clear view of upcoming obligations.
-
-## Current Status
-
-🚧 Under development
-
-The backend foundation is being built separately, including:
-
-* User authentication
-* Commitment management
-* Recurring and one-time commitments
-* Forecast generation
-* API endpoints for frontend consumption
-
-This repository currently contains the initial frontend setup and will evolve into the main user interface.
-
-## Planned Features
-
-* User authentication
-* Commitment dashboard
-* Create and manage commitments
-* Forecast timeline
-* Future financial overview
-* Visualisation of upcoming expenses and commitments
+Savings contributions currently update the balance when the commitment is created. Recurring contributions are not automatically applied again over time.
 
 ## Tech Stack
 
-* React
-* TypeScript
-* Vite
+- React 19
+- TypeScript
+- Vite
+- React Router
+- Vitest and Testing Library
+- ESLint
 
-Additional libraries and architecture decisions will be introduced as the application grows.
+## Local Development
 
-## Development
+The frontend expects the Rails API to be running locally. By default, Vite proxies API requests to `http://localhost:3000`.
 
 Install dependencies:
 
@@ -51,17 +39,28 @@ Install dependencies:
 npm install
 ```
 
+Create the local environment file:
+
+```bash
+cp .env.example .env
+```
+
+If the backend runs on another port, update `VITE_API_PROXY_TARGET` in `.env`.
+
 Start the development server:
 
 ```bash
 npm run dev
 ```
 
-## Project Goals
+## Checks
 
-The goal is to build a clean, maintainable frontend that demonstrates:
+```bash
+npm test
+npm run lint
+npm run build
+```
 
-* Modern React development practices
-* Strong separation between UI and API concerns
-* A practical personal finance product experience
-* A scalable foundation for future features
+## Production API Configuration
+
+Set `VITE_API_BASE_URL` to the deployed Rails API URL before creating the production build. Leave it empty during local development so requests use the Vite proxy.
