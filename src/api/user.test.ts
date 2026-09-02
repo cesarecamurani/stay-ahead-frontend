@@ -19,6 +19,7 @@ describe('user api', () => {
       username: 'testuser',
       monthly_income: '5000.00',
       savings: '10000.00',
+      protected_savings: '3000.00',
       currency: 'EUR',
     }
     mockRequest.mockResolvedValue({ user: profile })

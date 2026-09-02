@@ -20,6 +20,7 @@ const CATEGORY_OPTIONS: { value: CommitmentCategory; label: string }[] = [
   { value: 'debt', label: 'Debt' },
   { value: 'service', label: 'Service' },
   { value: 'investment', label: 'Investment' },
+  { value: 'savings', label: 'Savings' },
 ]
 
 const RECURRENCE_OPTIONS: { value: CommitmentRecurrence; label: string }[] = [

@@ -86,6 +86,10 @@ export function DashboardSummary() {
           value={formatCurrency(profile.savings, profile.currency)}
         />
         <SummaryCard
+          label="Protected Savings"
+          value={formatCurrency(profile.protected_savings, profile.currency)}
+        />
+        <SummaryCard
           label="Monthly Commitments"
           value={formatCurrency(
             summary.monthly_commitments_amount,

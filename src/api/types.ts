@@ -7,6 +7,7 @@ export interface User {
 export interface UserProfile extends User {
   monthly_income: string | null
   savings: string | null
+  protected_savings: string | null
   currency: string
 }
 
@@ -27,6 +28,7 @@ export interface RegisterUserInput {
   password_confirmation: string
   monthly_income: number
   savings: number
+  protected_savings: number
   currency: string
 }
 
@@ -35,6 +37,7 @@ export type CommitmentCategory =
   | 'debt'
   | 'service'
   | 'investment'
+  | 'savings'
 
 export type CommitmentStatus =
   | 'scheduled'

@@ -33,6 +33,7 @@ function AuthState() {
             password_confirmation: 'secret',
             monthly_income: 3000,
             savings: 1000,
+            protected_savings: 500,
             currency: 'EUR',
           })
         }

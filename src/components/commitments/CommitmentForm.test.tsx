@@ -54,6 +54,7 @@ describe('CommitmentForm', () => {
   it('shows start date and duration for recurring commitments', () => {
     render(<CommitmentForm />)
 
+    expect(screen.getByRole('option', { name: 'Savings' })).toBeInTheDocument()
     expect(screen.getByLabelText('Start date')).toBeInTheDocument()
     expect(screen.getByLabelText('Duration months')).toBeInTheDocument()
     expect(screen.queryByLabelText('Due date')).not.toBeInTheDocument()
