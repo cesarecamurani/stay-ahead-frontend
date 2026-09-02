@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  assessCommitment,
   cancelCommitment,
   createCommitment,
   getCommitments,
@@ -68,6 +69,37 @@ describe('commitments api', () => {
       token: 'jwt-token',
       body: { commitment: input },
     })
+  })
+
+  it('assesses a commitment without creating it', async () => {
+    const input = {
+      name: 'Apple TV',
+      category: 'service' as const,
+      recurrence: 'monthly' as const,
+      amount: 10,
+      start_date: '2026-12-01',
+    }
+    const assessment = {
+      affordable: true,
+      overexposed: false,
+      worst_case_date: '2026-12-01',
+      projected_monthly_commitments: '2450.00',
+      remaining_monthly_cash_flow: '550.00',
+      remaining_spendable_savings: '3000.00',
+    }
+    mockRequest.mockResolvedValue({ assessment })
+
+    await expect(assessCommitment('jwt-token', input)).resolves.toEqual(
+      assessment,
+    )
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/api/v1/commitments/assessment',
+      {
+        method: 'POST',
+        token: 'jwt-token',
+        body: { commitment: input },
+      },
+    )
   })
 
   it.each([

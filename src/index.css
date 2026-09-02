@@ -761,6 +761,27 @@ a:hover {
   margin-top: 0;
 }
 
+.commitment-assessment {
+  padding: var(--space-md);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+}
+
+.commitment-assessment--overexposed {
+  background-color: var(--color-error-bg);
+  border-color: var(--color-error-border);
+}
+
+.commitment-assessment h2 {
+  margin: 0 0 var(--space-xs);
+  font-size: 1rem;
+}
+
+.commitment-assessment p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
 .commitment-list {
   display: flex;
   flex-direction: column;
