@@ -16,6 +16,7 @@ const BREAKDOWN_CATEGORIES: {
   { key: 'debt', label: 'Debt' },
   { key: 'service', label: 'Services' },
   { key: 'investment', label: 'Investments' },
+  { key: 'savings', label: 'Savings' },
 ]
 
 export function Breakdown() {

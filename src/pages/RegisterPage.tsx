@@ -35,8 +35,12 @@ export function RegisterPage() {
   const [passwordConfirmationError, setPasswordConfirmationError] = useState<string | null>(null)
   const [monthlyIncome, setMonthlyIncome] = useState('')
   const [savings, setSavings] = useState('')
+  const [protectedSavings, setProtectedSavings] = useState('')
   const [monthlyIncomeError, setMonthlyIncomeError] = useState<string | null>(null)
   const [savingsError, setSavingsError] = useState<string | null>(null)
+  const [protectedSavingsError, setProtectedSavingsError] = useState<
+    string | null
+  >(null)
   const [currency, setCurrency] = useState(DEFAULT_CURRENCY)
   const [formError, setFormError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -55,6 +59,7 @@ export function RegisterPage() {
     setPasswordConfirmationError(null)
     setMonthlyIncomeError(null)
     setSavingsError(null)
+    setProtectedSavingsError(null)
 
     const normalizedUsername = username.trim().toLowerCase()
     const usernameValidationError = validateUsername(normalizedUsername)
@@ -77,6 +82,7 @@ export function RegisterPage() {
 
     const monthlyIncomeValue = parseFormattedNumber(monthlyIncome)
     const savingsValue = parseFormattedNumber(savings)
+    const protectedSavingsValue = parseFormattedNumber(protectedSavings)
 
     if (!Number.isFinite(monthlyIncomeValue)) {
       setMonthlyIncomeError('Please enter a valid amount.')
@@ -85,6 +91,11 @@ export function RegisterPage() {
 
     if (!Number.isFinite(savingsValue)) {
       setSavingsError('Please enter a valid amount.')
+      return
+    }
+
+    if (!Number.isFinite(protectedSavingsValue)) {
+      setProtectedSavingsError('Please enter a valid amount.')
       return
     }
 
@@ -98,6 +109,7 @@ export function RegisterPage() {
         password_confirmation: passwordConfirmation,
         monthly_income: monthlyIncomeValue,
         savings: savingsValue,
+        protected_savings: protectedSavingsValue,
         currency,
       })
       navigate('/')
@@ -214,6 +226,23 @@ export function RegisterPage() {
             }}
             required
             disabled={isSubmitting}
+          />
+          <NumberInput
+            id="protected_savings"
+            label="Protected savings"
+            min="0"
+            step="0.01"
+            value={protectedSavings}
+            onValueChange={(value) => {
+              setProtectedSavings(value)
+
+              if (protectedSavingsError) {
+                setProtectedSavingsError(null)
+              }
+            }}
+            required
+            disabled={isSubmitting}
+            error={protectedSavingsError}
           />
           <Select
             id="currency"

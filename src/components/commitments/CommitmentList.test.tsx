@@ -55,6 +55,7 @@ describe('CommitmentList', () => {
       username: 'testuser',
       monthly_income: '5000.00',
       savings: '10000.00',
+      protected_savings: '3000.00',
       currency: 'GBP',
     })
   })

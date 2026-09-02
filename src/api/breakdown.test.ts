@@ -18,6 +18,7 @@ describe('breakdown api', () => {
       debt: '100.00',
       service: '22.00',
       investment: '250.00',
+      savings: '300.00',
     }
     mockRequest.mockResolvedValue({ breakdown })
 

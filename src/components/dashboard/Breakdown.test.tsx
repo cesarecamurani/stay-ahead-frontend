@@ -27,6 +27,7 @@ const breakdown: BreakdownData = {
   debt: '100.00',
   service: '22.00',
   investment: '250.00',
+  savings: '300.00',
 }
 
 const profile: UserProfile = {
@@ -35,6 +36,7 @@ const profile: UserProfile = {
   username: 'testuser',
   monthly_income: '5000.00',
   savings: '10000.00',
+  protected_savings: '3000.00',
   currency: 'GBP',
 }
 
@@ -83,6 +85,7 @@ describe('Breakdown', () => {
     expect(screen.getByText('Debt')).toBeInTheDocument()
     expect(screen.getByText('Services')).toBeInTheDocument()
     expect(screen.getByText('Investments')).toBeInTheDocument()
+    expect(screen.getByText('Savings')).toBeInTheDocument()
 
     expect(
       screen.getByText(formatCurrency(breakdown.obligation, profile.currency)),
@@ -96,6 +99,9 @@ describe('Breakdown', () => {
     expect(
       screen.getByText(formatCurrency(breakdown.investment, profile.currency)),
     ).toBeInTheDocument()
+    expect(
+      screen.getByText(formatCurrency(breakdown.savings, profile.currency)),
+    ).toBeInTheDocument()
 
     expect(mockGetBreakdown).toHaveBeenCalledWith('jwt-token')
     expect(mockGetCurrentUser).toHaveBeenCalledWith('jwt-token')
@@ -107,6 +113,7 @@ describe('Breakdown', () => {
       debt: '0.00',
       service: '0.00',
       investment: '0.00',
+      savings: '0.00',
     }
     mockGetBreakdown.mockResolvedValue(emptyBreakdown)
     mockGetCurrentUser.mockResolvedValue(profile)
@@ -120,9 +127,10 @@ describe('Breakdown', () => {
     expect(screen.getByText('Debt')).toBeInTheDocument()
     expect(screen.getByText('Services')).toBeInTheDocument()
     expect(screen.getByText('Investments')).toBeInTheDocument()
+    expect(screen.getByText('Savings')).toBeInTheDocument()
 
     const zeroAmount = formatCurrency('0.00', profile.currency)
-    expect(screen.getAllByText(zeroAmount)).toHaveLength(4)
+    expect(screen.getAllByText(zeroAmount)).toHaveLength(5)
   })
 
   it('keeps loading until both requests settle', async () => {

@@ -29,6 +29,7 @@ const profile: UserProfile = {
   username: 'testuser',
   monthly_income: '5000.00',
   savings: '10000.00',
+  protected_savings: '3000.00',
   currency: 'GBP',
 }
 
@@ -90,6 +91,7 @@ describe('DashboardSummary', () => {
     })
 
     expect(screen.getByText('Savings')).toBeInTheDocument()
+    expect(screen.getByText('Protected Savings')).toBeInTheDocument()
     expect(screen.getByText('Monthly Commitments')).toBeInTheDocument()
     expect(screen.getByText('Available Cash Flow')).toBeInTheDocument()
     expect(screen.getByText('Savings Runway')).toBeInTheDocument()
@@ -99,6 +101,11 @@ describe('DashboardSummary', () => {
     ).toBeInTheDocument()
     expect(
       screen.getByText(formatCurrency(profile.savings, profile.currency)),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        formatCurrency(profile.protected_savings, profile.currency),
+      ),
     ).toBeInTheDocument()
     expect(
       screen.getByText(
