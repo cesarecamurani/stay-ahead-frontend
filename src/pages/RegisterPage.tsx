@@ -213,7 +213,7 @@ export function RegisterPage() {
           />
           <NumberInput
             id="savings"
-            label="Savings"
+            label="Total savings"
             min="0"
             step="0.01"
             value={savings}

@@ -20,6 +20,13 @@ export function QuickActions() {
       >
         Forecast
       </Button>
+      <Button
+        type="button"
+        className="quick-actions__button"
+        onClick={() => navigate('/profile')}
+      >
+        Update profile
+      </Button>
     </section>
   )
 }

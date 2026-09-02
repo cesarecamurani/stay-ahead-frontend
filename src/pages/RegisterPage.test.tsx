@@ -37,7 +37,7 @@ describe('RegisterPage', () => {
     await user.type(screen.getByLabelText('Password'), 'Password123!')
     await user.type(screen.getByLabelText('Confirm password'), 'Password123!')
     await user.type(screen.getByLabelText('Monthly income'), '3000')
-    await user.type(screen.getByLabelText('Savings'), '1000')
+    await user.type(screen.getByLabelText('Total savings'), '1000')
     await user.type(screen.getByLabelText('Protected savings'), '0')
     await user.click(screen.getByRole('button', { name: 'Register' }))
 

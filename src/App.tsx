@@ -5,6 +5,7 @@ import { ForecastPage } from './pages/ForecastPage.tsx'
 import { HomePage } from './pages/HomePage.tsx'
 import { LoginPage } from './pages/LoginPage.tsx'
 import { NewCommitmentPage } from './pages/NewCommitmentPage.tsx'
+import { ProfilePage } from './pages/ProfilePage.tsx'
 import { RegisterPage } from './pages/RegisterPage.tsx'
 
 function App() {
@@ -41,6 +42,14 @@ function App() {
         element={
           <ProtectedRoute>
             <ForecastPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         }
       />
